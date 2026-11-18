@@ -88,22 +88,21 @@ class Education(models.Model):
     fieldOfStudy = models.CharField(max_length=150, blank=True)
     graduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
 
-#
-# class CareerProfile(models.Model):
-#     class EmploymentStatus(models.TextChoices):
-#         EMPLOYED = 'EMPLOYED', 'Employed'
-#         SELF_EMPLOYED = 'SELF_EMPLOYED', 'Self Employed'
-#         BUSINESS_OWNER = 'BUSINESS_OWNER', 'Business Owner'
-#         STUDENT = 'STUDENT', 'Student'
-#         UNEMPLOYED = 'UNEMPLOYED', 'Unemployed'
-#         RETIRED = 'RETIRED', 'Retired'
-#
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='careerProfile')
-#     employmentStatus = models.CharField(max_length=30, choices=EmploymentStatus.choices, blank=True)
-#     occupation = models.CharField(max_length=150, blank=True)
-#     industry = models.CharField(max_length=150, blank=True)
-#     willingToRelocate = models.BooleanField(null=True, blank=True)
-#
+
+class CareerProfile(models.Model):
+    class EmploymentStatus(models.TextChoices):
+        EMPLOYED = 'EMPLOYED', 'Employed'
+        SELF_EMPLOYED = 'SELF_EMPLOYED', 'Self Employed'
+        BUSINESS_OWNER = 'BUSINESS_OWNER', 'Business Owner'
+        STUDENT = 'STUDENT', 'Student'
+        UNEMPLOYED = 'UNEMPLOYED', 'Unemployed'
+        RETIRED = 'RETIRED', 'Retired'
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='careerProfile')
+    employmentStatus = models.CharField(max_length=30, choices=EmploymentStatus.choices, blank=True)
+    occupation = models.CharField(max_length=150, blank=True)
+    industry = models.CharField(max_length=150, blank=True)
+
 #
 # class ProfileLocation(models.Model):
 #     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profileLocation')

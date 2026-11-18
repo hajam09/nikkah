@@ -5,14 +5,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
 from core.forms import (
-    LoginForm,
+    CareerProfileForm,
     EducationForm,
+    LoginForm,
     MatrimonialProfileForm,
     PasswordChangeForm,
     PersonalProfileForm,
     ReligiousProfileForm,
 )
-from core.models import Education, MatrimonialProfile, ReligiousProfile
+from core.models import CareerProfile, Education, MatrimonialProfile, ReligiousProfile
 
 
 class UserLoginView(LoginView):
@@ -103,5 +104,23 @@ def educationSettingsView(request):
     return render(request, 'core/settings/education.html', {
         'form': form,
         'active_setting': 'education',
+        'is_creating_profile': profile is None,
+    })
+
+
+@login_required
+def careerProfileSettingsView(request):
+    profile = CareerProfile.objects.filter(user=request.user).first()
+    form = CareerProfileForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your career profile has been updated.')
+        return redirect('core:settings-career')
+
+    return render(request, 'core/settings/career_profile.html', {
+        'form': form,
+        'active_setting': 'career',
         'is_creating_profile': profile is None,
     })

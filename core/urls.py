@@ -4,6 +4,7 @@ from django.contrib.auth.views import LogoutView
 from core.views import (
     UserLoginView,
     UserPasswordChangeView,
+    careerProfileSettingsView,
     dashboardView,
     educationSettingsView,
     indexView,
@@ -23,5 +24,6 @@ urlpatterns = [
     path('settings/matrimonial/', matrimonialProfileSettingsView, name='settings-matrimonial'),
     path('settings/religious/', religiousProfileSettingsView, name='settings-religious'),
     path('settings/education/', educationSettingsView, name='settings-education'),
+    path('settings/career/', careerProfileSettingsView, name='settings-career'),
     path('logout/', LogoutView.as_view(next_page='core:login-view'), name='logout-view'),
 ]
