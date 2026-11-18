@@ -1,8 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.shortcuts import render
+from django.urls import reverse_lazy
 
-from core.forms import LoginForm
+from core.forms import LoginForm, MatrimonialProfileForm, PasswordChangeForm, PersonalProfileForm
+from core.models import MatrimonialProfile
 
 
 class UserLoginView(LoginView):
@@ -18,3 +21,42 @@ def indexView(request):
 @login_required
 def dashboardView(request):
     return render(request, 'core/dashboard.html')
+
+
+@login_required
+def personalSettingsView(request):
+    form = PersonalProfileForm(request.POST or None, instance=request.user)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Your personal profile has been updated.')
+
+    return render(request, 'core/settings/personal_profile.html', {
+        'form': form,
+        'active_setting': 'personal',
+    })
+
+
+class UserPasswordChangeView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    template_name = 'core/settings/password.html'
+    success_url = reverse_lazy('core:settings-password')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your password has been changed.')
+        return super().form_valid(form)
+
+
+@login_required
+def matrimonialProfileSettingsView(request):
+    profile = MatrimonialProfile.objects.filter(user=request.user).first()
+    form = MatrimonialProfileForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your matrimonial profile has been updated.')
+
+    return render(request, 'core/settings/matrimonial_profile.html', {
+        'form': form,
+        'active_setting': 'matrimonial',
+    })
