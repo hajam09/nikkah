@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+
+{% block title %}Log in | Nikkah{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+            <h1 class="h3 mb-4 text-center">Log in</h1>
+            <form method="post">
+                {% csrf_token %}
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button class="btn btn-primary w-100" type="submit">Log in</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
