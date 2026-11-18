@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
 from core.forms import LoginForm, MatrimonialProfileForm, PasswordChangeForm, PersonalProfileForm
@@ -29,6 +29,7 @@ def personalSettingsView(request):
     if request.method == 'POST' and form.is_valid():
         form.save()
         messages.success(request, 'Your personal profile has been updated.')
+        return redirect('core:settings-personal')
 
     return render(request, 'core/settings/personal_profile.html', {
         'form': form,
@@ -55,6 +56,7 @@ def matrimonialProfileSettingsView(request):
         profile.user = request.user
         profile.save()
         messages.success(request, 'Your matrimonial profile has been updated.')
+        return redirect('core:settings-matrimonial')
 
     return render(request, 'core/settings/matrimonial_profile.html', {
         'form': form,
