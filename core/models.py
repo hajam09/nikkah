@@ -35,41 +35,41 @@ class MatrimonialProfile(models.Model):
     ethnicity = models.CharField(max_length=100, blank=True)
 
 
-# class ReligiousProfile(models.Model):
-#     class Madhab(models.TextChoices):
-#         HANAFI = 'HANAFI', 'Hanafi'
-#         SHAFI = 'SHAFI', 'Shafi'
-#         MALIKI = 'MALIKI', 'Maliki'
-#         HANBALI = 'HANBALI', 'Hanbali'
-#         PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-#
-#     class PrayerFrequency(models.TextChoices):
-#         FIVE_TIMES = 'FIVE_TIMES', 'Five times daily'
-#         MOST_PRAYERS = 'MOST_PRAYERS', 'Most prayers'
-#         SOMETIMES = 'SOMETIMES', 'Sometimes'
-#         RARELY = 'RARELY', 'Rarely'
-#         NOT_PRACTICING = 'NOT_PRACTICING', 'Not currently practicing'
-#         PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-#
-#     class QuranReading(models.TextChoices):
-#         DAILY = 'DAILY', 'Daily'
-#         SEVERAL_TIMES_WEEK = 'SEVERAL_TIMES_WEEK', 'Several times a week'
-#         WEEKLY = 'WEEKLY', 'Weekly'
-#         OCCASIONALLY = 'OCCASIONALLY', 'Occasionally'
-#         RAMADAN = 'RAMADAN', 'During Ramadan'
-#         RARELY = 'RARELY', 'Rarely'
-#         NOT_CURRENTLY = 'NOT_CURRENTLY', 'Not currently reading'
-#         PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-#
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='religiousProfile')
-#     madhab = models.CharField(max_length=20, choices=Madhab.choices, blank=True)
-#     prayerFrequency = models.CharField(max_length=20, choices=PrayerFrequency.choices, blank=True)
-#     quranReading = models.CharField(max_length=25, choices=QuranReading.choices, blank=True, )
-#     observesFasting = models.BooleanField(null=True, blank=True)
-#     wearsHijab = models.BooleanField(null=True, blank=True)
-#     wearsNiqab = models.BooleanField(null=True, blank=True)
-#     halalLifestyle = models.BooleanField(default=True)
-#     religiousPracticeDescription = models.TextField(blank=True)
+class ReligiousProfile(models.Model):
+    class Madhab(models.TextChoices):
+        HANAFI = 'HANAFI', 'Hanafi'
+        SHAFI = 'SHAFI', 'Shafi'
+        MALIKI = 'MALIKI', 'Maliki'
+        HANBALI = 'HANBALI', 'Hanbali'
+        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
+
+    class PrayerFrequency(models.TextChoices):
+        FIVE_TIMES = 'FIVE_TIMES', 'Five times daily'
+        MOST_PRAYERS = 'MOST_PRAYERS', 'Most prayers'
+        SOMETIMES = 'SOMETIMES', 'Sometimes'
+        RARELY = 'RARELY', 'Rarely'
+        NOT_PRACTICING = 'NOT_PRACTICING', 'Not currently practicing'
+        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
+
+    class QuranReading(models.TextChoices):
+        DAILY = 'DAILY', 'Daily'
+        SEVERAL_TIMES_WEEK = 'SEVERAL_TIMES_WEEK', 'Several times a week'
+        WEEKLY = 'WEEKLY', 'Weekly'
+        OCCASIONALLY = 'OCCASIONALLY', 'Occasionally'
+        RAMADAN = 'RAMADAN', 'During Ramadan'
+        RARELY = 'RARELY', 'Rarely'
+        NOT_CURRENTLY = 'NOT_CURRENTLY', 'Not currently reading'
+        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='religiousProfile')
+    madhab = models.CharField(max_length=20, choices=Madhab.choices, blank=True)
+    prayerFrequency = models.CharField(max_length=20, choices=PrayerFrequency.choices, blank=True)
+    quranReading = models.CharField(max_length=25, choices=QuranReading.choices, blank=True, )
+    observesFasting = models.BooleanField(null=True, blank=True)
+    wearsHijab = models.BooleanField(null=True, blank=True)
+    wearsNiqab = models.BooleanField(null=True, blank=True)
+    halalLifestyle = models.BooleanField(default=True)
+    religiousPracticeDescription = models.TextField(blank=True)
 #
 #
 # class Education(models.Model):

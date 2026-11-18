@@ -4,8 +4,14 @@ from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from core.forms import LoginForm, MatrimonialProfileForm, PasswordChangeForm, PersonalProfileForm
-from core.models import MatrimonialProfile
+from core.forms import (
+    LoginForm,
+    MatrimonialProfileForm,
+    PasswordChangeForm,
+    PersonalProfileForm,
+    ReligiousProfileForm,
+)
+from core.models import MatrimonialProfile, ReligiousProfile
 
 
 class UserLoginView(LoginView):
@@ -61,4 +67,22 @@ def matrimonialProfileSettingsView(request):
     return render(request, 'core/settings/matrimonial_profile.html', {
         'form': form,
         'active_setting': 'matrimonial',
+    })
+
+
+@login_required
+def religiousProfileSettingsView(request):
+    profile = ReligiousProfile.objects.filter(user=request.user).first()
+    form = ReligiousProfileForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your religious profile has been updated.')
+        return redirect('core:settings-religious')
+
+    return render(request, 'core/settings/religious_profile.html', {
+        'form': form,
+        'active_setting': 'religious',
+        'is_creating_profile': profile is None,
     })

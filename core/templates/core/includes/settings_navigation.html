@@ -14,4 +14,9 @@
        {% if active_setting == 'matrimonial' %}aria-current="page"{% endif %}>
         MatrimonialProfile
     </a>
+    <a class="nav-link{% if active_setting == 'religious' %} active{% endif %}"
+       href="{% url 'core:settings-religious' %}"
+       {% if active_setting == 'religious' %}aria-current="page"{% endif %}>
+        ReligiousProfile
+    </a>
 </nav>

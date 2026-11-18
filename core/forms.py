@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm as DjangoPasswordChangeForm
 
-from core.models import MatrimonialProfile, User
+from core.models import MatrimonialProfile, ReligiousProfile, User
 
 
 class LoginForm(AuthenticationForm):
@@ -102,6 +102,44 @@ class MatrimonialProfileForm(forms.ModelForm):
         if centimeters < 1 or centimeters > 300:
             raise forms.ValidationError('Enter a height between 1 and 300 centimeters.')
         return int(centimeters)
+
+
+class ReligiousProfileForm(forms.ModelForm):
+    halalLifestyle = forms.TypedChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        coerce=lambda value: value == 'True',
+        label='Halal lifestyle',
+        widget=forms.Select,
+    )
+
+    class Meta:
+        model = ReligiousProfile
+        fields = (
+            'madhab',
+            'prayerFrequency',
+            'quranReading',
+            'observesFasting',
+            'wearsHijab',
+            'wearsNiqab',
+            'halalLifestyle',
+            'religiousPracticeDescription',
+        )
+        widgets = {
+            'religiousPracticeDescription': forms.Textarea(attrs={'rows': 5}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field.widget, (forms.Select, forms.NullBooleanSelect)):
+                css_class = 'form-select'
+            elif isinstance(field.widget, forms.CheckboxInput):
+                css_class = 'form-check-input'
+            else:
+                css_class = 'form-control'
+            field.widget.attrs['class'] = css_class
+            if not isinstance(field.widget, (forms.CheckboxInput, forms.Select, forms.NullBooleanSelect)):
+                field.widget.attrs['placeholder'] = field.label
 
 
 class PasswordChangeForm(DjangoPasswordChangeForm):

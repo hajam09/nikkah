@@ -8,6 +8,7 @@ from core.views import (
     indexView,
     matrimonialProfileSettingsView,
     personalSettingsView,
+    religiousProfileSettingsView,
 )
 
 app_name = 'core'
@@ -19,5 +20,6 @@ urlpatterns = [
     path('settings/personal/', personalSettingsView, name='settings-personal'),
     path('settings/password/', UserPasswordChangeView.as_view(), name='settings-password'),
     path('settings/matrimonial/', matrimonialProfileSettingsView, name='settings-matrimonial'),
+    path('settings/religious/', religiousProfileSettingsView, name='settings-religious'),
     path('logout/', LogoutView.as_view(next_page='core:login-view'), name='logout-view'),
 ]
