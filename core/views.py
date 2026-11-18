@@ -6,12 +6,13 @@ from django.urls import reverse_lazy
 
 from core.forms import (
     LoginForm,
+    EducationForm,
     MatrimonialProfileForm,
     PasswordChangeForm,
     PersonalProfileForm,
     ReligiousProfileForm,
 )
-from core.models import MatrimonialProfile, ReligiousProfile
+from core.models import Education, MatrimonialProfile, ReligiousProfile
 
 
 class UserLoginView(LoginView):
@@ -84,5 +85,23 @@ def religiousProfileSettingsView(request):
     return render(request, 'core/settings/religious_profile.html', {
         'form': form,
         'active_setting': 'religious',
+        'is_creating_profile': profile is None,
+    })
+
+
+@login_required
+def educationSettingsView(request):
+    profile = Education.objects.filter(user=request.user).first()
+    form = EducationForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your education profile has been updated.')
+        return redirect('core:settings-education')
+
+    return render(request, 'core/settings/education.html', {
+        'form': form,
+        'active_setting': 'education',
         'is_creating_profile': profile is None,
     })

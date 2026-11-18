@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from core.models import User, MatrimonialProfile, ReligiousProfile
+from core.models import Education, User, MatrimonialProfile, ReligiousProfile
 
 
 @admin.register(User)
@@ -15,4 +15,9 @@ class MatrimonialProfileAdmin(admin.ModelAdmin):
 
 @admin.register(ReligiousProfile)
 class ReligiousProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Education)
+class EducationAdmin(admin.ModelAdmin):
     pass

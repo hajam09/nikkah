@@ -5,6 +5,7 @@ from core.views import (
     UserLoginView,
     UserPasswordChangeView,
     dashboardView,
+    educationSettingsView,
     indexView,
     matrimonialProfileSettingsView,
     personalSettingsView,
@@ -21,5 +22,6 @@ urlpatterns = [
     path('settings/password/', UserPasswordChangeView.as_view(), name='settings-password'),
     path('settings/matrimonial/', matrimonialProfileSettingsView, name='settings-matrimonial'),
     path('settings/religious/', religiousProfileSettingsView, name='settings-religious'),
+    path('settings/education/', educationSettingsView, name='settings-education'),
     path('logout/', LogoutView.as_view(next_page='core:login-view'), name='logout-view'),
 ]

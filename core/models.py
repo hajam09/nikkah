@@ -70,24 +70,24 @@ class ReligiousProfile(models.Model):
     wearsNiqab = models.BooleanField(null=True, blank=True)
     halalLifestyle = models.BooleanField(default=True)
     religiousPracticeDescription = models.TextField(blank=True)
-#
-#
-# class Education(models.Model):
-#     class EducationLevel(models.TextChoices):
-#         HIGH_SCHOOL = 'HIGH_SCHOOL', 'High School'
-#         DIPLOMA = 'DIPLOMA', 'Diploma'
-#         BACHELORS = 'BACHELORS', "Bachelor's"
-#         MASTERS = 'MASTERS', "Master's"
-#         PHD = 'PHD', 'PhD'
-#         ISLAMIC_STUDIES = 'ISLAMIC_STUDIES', 'Islamic Studies'
-#         OTHER = 'OTHER', 'Other'
-#
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='educations')
-#     qualification = models.CharField(max_length=30, choices=EducationLevel.choices)
-#     institution = models.CharField(max_length=255, blank=True)
-#     fieldOfStudy = models.CharField(max_length=150, blank=True)
-#     graduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
-#
+
+
+class Education(models.Model):
+    class EducationLevel(models.TextChoices):
+        HIGH_SCHOOL = 'HIGH_SCHOOL', 'High School'
+        DIPLOMA = 'DIPLOMA', 'Diploma'
+        BACHELORS = 'BACHELORS', "Bachelor's"
+        MASTERS = 'MASTERS', "Master's"
+        PHD = 'PHD', 'PhD'
+        ISLAMIC_STUDIES = 'ISLAMIC_STUDIES', 'Islamic Studies'
+        OTHER = 'OTHER', 'Other'
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='educations')
+    qualification = models.CharField(max_length=30, choices=EducationLevel.choices)
+    institution = models.CharField(max_length=255, blank=True)
+    fieldOfStudy = models.CharField(max_length=150, blank=True)
+    graduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
+
 #
 # class CareerProfile(models.Model):
 #     class EmploymentStatus(models.TextChoices):

@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm as DjangoPasswordChangeForm
 
-from core.models import MatrimonialProfile, ReligiousProfile, User
+from core.models import Education, MatrimonialProfile, ReligiousProfile, User
 
 
 class LoginForm(AuthenticationForm):
@@ -140,6 +140,19 @@ class ReligiousProfileForm(forms.ModelForm):
             field.widget.attrs['class'] = css_class
             if not isinstance(field.widget, (forms.CheckboxInput, forms.Select, forms.NullBooleanSelect)):
                 field.widget.attrs['placeholder'] = field.label
+
+
+class EducationForm(forms.ModelForm):
+    class Meta:
+        model = Education
+        fields = ('qualification', 'institution', 'fieldOfStudy', 'graduationYear')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
+            field.widget.attrs['class'] = css_class
+            field.widget.attrs['placeholder'] = field.label
 
 
 class PasswordChangeForm(DjangoPasswordChangeForm):

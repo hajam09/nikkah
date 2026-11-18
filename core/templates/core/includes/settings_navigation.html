@@ -19,4 +19,9 @@
        {% if active_setting == 'religious' %}aria-current="page"{% endif %}>
         ReligiousProfile
     </a>
+    <a class="nav-link{% if active_setting == 'education' %} active{% endif %}"
+       href="{% url 'core:settings-education' %}"
+       {% if active_setting == 'education' %}aria-current="page"{% endif %}>
+        Education
+    </a>
 </nav>
