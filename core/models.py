@@ -98,10 +98,36 @@ class CareerProfile(models.Model):
         UNEMPLOYED = 'UNEMPLOYED', 'Unemployed'
         RETIRED = 'RETIRED', 'Retired'
 
+    class Industry(models.TextChoices):
+        IT = 'IT', 'Information Technology'
+        HEALTHCARE = 'HEALTHCARE', 'Healthcare'
+        EDUCATION = 'EDUCATION', 'Education'
+        FINANCE = 'FINANCE', 'Finance'
+        ENGINEERING = 'ENGINEERING', 'Engineering'
+        GOVERNMENT = 'GOVERNMENT', 'Government'
+        CONSTRUCTION = 'CONSTRUCTION', 'Construction'
+        RETAIL = 'RETAIL', 'Retail'
+        MANUFACTURING = 'MANUFACTURING', 'Manufacturing'
+        HOSPITALITY = 'HOSPITALITY', 'Hospitality'
+        LEGAL = 'LEGAL', 'Legal'
+        TRANSPORT = 'TRANSPORT', 'Transport'
+        AGRICULTURE = 'AGRICULTURE', 'Agriculture'
+        ARTS_MEDIA = 'ARTS_MEDIA', 'Arts and Media'
+        CONSULTING = 'CONSULTING', 'Consulting'
+        ENERGY_UTILITIES = 'ENERGY_UTILITIES', 'Energy and Utilities'
+        ENVIRONMENT = 'ENVIRONMENT', 'Environment'
+        INSURANCE = 'INSURANCE', 'Insurance'
+        NONPROFIT = 'NONPROFIT', 'Nonprofit'
+        REAL_ESTATE = 'REAL_ESTATE', 'Real Estate'
+        SCIENCE_RESEARCH = 'SCIENCE_RESEARCH', 'Science and Research'
+        TELECOMMUNICATIONS = 'TELECOMMUNICATIONS', 'Telecommunications'
+        OTHER = 'OTHER', 'Other'
+        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='careerProfile')
     employmentStatus = models.CharField(max_length=30, choices=EmploymentStatus.choices, blank=True)
     occupation = models.CharField(max_length=150, blank=True)
-    industry = models.CharField(max_length=150, blank=True)
+    industry = models.CharField(max_length=30, choices=Industry.choices, blank=True)
 
 
 class ProfileLocation(models.Model):
