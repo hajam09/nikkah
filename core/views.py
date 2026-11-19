@@ -11,9 +11,16 @@ from core.forms import (
     MatrimonialProfileForm,
     PasswordChangeForm,
     PersonalProfileForm,
+    ProfileLocationForm,
     ReligiousProfileForm,
 )
-from core.models import CareerProfile, Education, MatrimonialProfile, ReligiousProfile
+from core.models import (
+    CareerProfile,
+    Education,
+    MatrimonialProfile,
+    ProfileLocation,
+    ReligiousProfile,
+)
 
 
 class UserLoginView(LoginView):
@@ -122,5 +129,23 @@ def careerProfileSettingsView(request):
     return render(request, 'core/settings/career_profile.html', {
         'form': form,
         'active_setting': 'career',
+        'is_creating_profile': profile is None,
+    })
+
+
+@login_required
+def profileLocationSettingsView(request):
+    profile = ProfileLocation.objects.filter(user=request.user).first()
+    form = ProfileLocationForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your location profile has been updated.')
+        return redirect('core:settings-location')
+
+    return render(request, 'core/settings/location.html', {
+        'form': form,
+        'active_setting': 'location',
         'is_creating_profile': profile is None,
     })

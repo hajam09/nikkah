@@ -103,16 +103,16 @@ class CareerProfile(models.Model):
     occupation = models.CharField(max_length=150, blank=True)
     industry = models.CharField(max_length=150, blank=True)
 
-#
-# class ProfileLocation(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profileLocation')
-#     town = models.CharField(max_length=100, blank=True)
-#     city = models.CharField(max_length=100, blank=True)
-#     country = models.CharField(max_length=100)
-#     willingToRelocate = models.BooleanField(default=False)
-#     preferredCountries = models.JSONField(default=list, blank=True)
-#
-#
+
+class ProfileLocation(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profileLocation')
+    town = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100)
+    willingToRelocate = models.BooleanField(default=False)
+    preferredCountries = models.JSONField(default=list, blank=True)
+
+
 # class FamilyProfile(models.Model):
 #     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='familyProfile')
 #     fatherOccupation = models.CharField(max_length=150, blank=True)

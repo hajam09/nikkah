@@ -1,5 +1,6 @@
 asgiref==3.13.0
 Django==5.2.19
+django-countries==7.6.1
 django-browser-reload==1.21.0
 django-debug-toolbar==8.0.0
 Faker==40.54.0

@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from core.models import CareerProfile, Education, User, MatrimonialProfile, ReligiousProfile
+from core.models import (
+    CareerProfile,
+    Education,
+    MatrimonialProfile,
+    ProfileLocation,
+    ReligiousProfile,
+    User,
+)
 
 
 @admin.register(User)
@@ -25,4 +32,9 @@ class EducationAdmin(admin.ModelAdmin):
 
 @admin.register(CareerProfile)
 class CareerProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ProfileLocation)
+class ProfileLocationAdmin(admin.ModelAdmin):
     pass

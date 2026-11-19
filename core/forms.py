@@ -3,8 +3,16 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm as DjangoPasswordChangeForm
+from django_countries import countries
 
-from core.models import CareerProfile, Education, MatrimonialProfile, ReligiousProfile, User
+from core.models import (
+    CareerProfile,
+    Education,
+    MatrimonialProfile,
+    ProfileLocation,
+    ReligiousProfile,
+    User,
+)
 
 
 class LoginForm(AuthenticationForm):
@@ -166,6 +174,72 @@ class CareerProfileForm(forms.ModelForm):
             css_class = 'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
             field.widget.attrs['class'] = css_class
             field.widget.attrs['placeholder'] = field.label
+
+
+class ProfileLocationForm(forms.ModelForm):
+    country = forms.ChoiceField(
+        choices=(('', 'Select a country'),) + tuple((name, name) for _, name in countries),
+        label='Country',
+    )
+    willingToRelocate = forms.TypedChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        coerce=lambda value: value == 'True',
+        label='Willing to relocate',
+        widget=forms.Select,
+    )
+    preferredCountries = forms.MultipleChoiceField(
+        choices=tuple((name, name) for _, name in countries),
+        required=False,
+        label='Preferred countries',
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-select',
+            'placeholder': 'Select preferred countries',
+            'data-country-tags': 'true',
+        }),
+    )
+
+    class Meta:
+        model = ProfileLocation
+        fields = ('town', 'city', 'country', 'willingToRelocate', 'preferredCountries')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.is_bound:
+            if hasattr(self.data, 'getlist'):
+                submitted_countries = self.data.getlist('preferredCountries')
+            else:
+                submitted_countries = self.data.get('preferredCountries', [])
+                if isinstance(submitted_countries, str):
+                    submitted_countries = [submitted_countries]
+        else:
+            submitted_countries = []
+        existing_countries = self.instance.preferredCountries if self.instance.pk else []
+        country_names = {name for _, name in countries}
+        legacy_countries = [
+            value for value in existing_countries
+            if value not in country_names
+        ]
+        if self.instance.pk and self.instance.country and self.instance.country not in country_names:
+            self.fields['country'].choices += ((self.instance.country, self.instance.country),)
+        if legacy_countries:
+            self.fields['preferredCountries'].choices += tuple(
+                (value, value) for value in legacy_countries
+            )
+        self.fields['preferredCountries'].widget.choices = self.fields['preferredCountries'].choices
+
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-select' if isinstance(
+                field.widget, forms.Select
+            ) else 'form-control'
+            field.widget.attrs['placeholder'] = field.label
+
+    def clean_preferredCountries(self):
+        countries = self.cleaned_data['preferredCountries']
+        if not self.cleaned_data.get('willingToRelocate'):
+            return []
+        if len(countries) > 50:
+            raise forms.ValidationError('Select no more than 50 preferred countries.')
+        return countries
 
 
 class PasswordChangeForm(DjangoPasswordChangeForm):
