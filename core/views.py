@@ -7,19 +7,23 @@ from django.urls import reverse_lazy
 from core.forms import (
     CareerProfileForm,
     EducationForm,
+    FamilyProfileForm,
     LoginForm,
     MatrimonialProfileForm,
     PasswordChangeForm,
     PersonalProfileForm,
     ProfileLocationForm,
     ReligiousProfileForm,
+    WaliForm,
 )
 from core.models import (
     CareerProfile,
     Education,
+    FamilyProfile,
     MatrimonialProfile,
     ProfileLocation,
     ReligiousProfile,
+    Wali,
 )
 
 
@@ -76,6 +80,42 @@ def matrimonialProfileSettingsView(request):
     return render(request, 'core/settings/matrimonial_profile.html', {
         'form': form,
         'active_setting': 'matrimonial',
+    })
+
+
+@login_required
+def familyProfileSettingsView(request):
+    profile = FamilyProfile.objects.filter(user=request.user).first()
+    form = FamilyProfileForm(request.POST or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        profile = form.save(commit=False)
+        profile.user = request.user
+        profile.save()
+        messages.success(request, 'Your family profile has been updated.')
+        return redirect('core:settings-family')
+
+    return render(request, 'core/settings/family_profile.html', {
+        'form': form,
+        'active_setting': 'family',
+        'is_creating_profile': profile is None,
+    })
+
+
+@login_required
+def waliSettingsView(request):
+    wali = Wali.objects.filter(user=request.user).first()
+    form = WaliForm(request.POST or None, instance=wali)
+    if request.method == 'POST' and form.is_valid():
+        wali = form.save(commit=False)
+        wali.user = request.user
+        wali.save()
+        messages.success(request, 'Your wali details have been updated.')
+        return redirect('core:settings-wali')
+
+    return render(request, 'core/settings/wali.html', {
+        'form': form,
+        'active_setting': 'wali',
+        'is_creating_profile': wali is None,
     })
 
 

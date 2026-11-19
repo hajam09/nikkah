@@ -7,11 +7,13 @@ from core.views import (
     careerProfileSettingsView,
     dashboardView,
     educationSettingsView,
+    familyProfileSettingsView,
     indexView,
     matrimonialProfileSettingsView,
     personalSettingsView,
     profileLocationSettingsView,
     religiousProfileSettingsView,
+    waliSettingsView,
 )
 
 app_name = 'core'
@@ -23,6 +25,8 @@ urlpatterns = [
     path('settings/personal/', personalSettingsView, name='settings-personal'),
     path('settings/password/', UserPasswordChangeView.as_view(), name='settings-password'),
     path('settings/matrimonial/', matrimonialProfileSettingsView, name='settings-matrimonial'),
+    path('settings/family/', familyProfileSettingsView, name='settings-family'),
+    path('settings/wali/', waliSettingsView, name='settings-wali'),
     path('settings/religious/', religiousProfileSettingsView, name='settings-religious'),
     path('settings/education/', educationSettingsView, name='settings-education'),
     path('settings/career/', careerProfileSettingsView, name='settings-career'),

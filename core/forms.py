@@ -8,10 +8,12 @@ from django_countries import countries
 from core.models import (
     CareerProfile,
     Education,
+    FamilyProfile,
     MatrimonialProfile,
     ProfileLocation,
     ReligiousProfile,
     User,
+    Wali,
 )
 
 
@@ -110,6 +112,52 @@ class MatrimonialProfileForm(forms.ModelForm):
         if centimeters < 1 or centimeters > 300:
             raise forms.ValidationError('Enter a height between 1 and 300 centimeters.')
         return int(centimeters)
+
+
+class FamilyProfileForm(forms.ModelForm):
+    class Meta:
+        model = FamilyProfile
+        fields = (
+            'fatherOccupation',
+            'motherOccupation',
+            'numberOfSiblings',
+            'familyBackground',
+            'familyValues',
+        )
+        widgets = {
+            'familyBackground': forms.Textarea(attrs={'rows': 4}),
+            'familyValues': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['placeholder'] = field.label
+
+
+class WaliForm(forms.ModelForm):
+    consentToContact = forms.TypedChoiceField(
+        choices=((True, 'Yes'), (False, 'No')),
+        coerce=lambda value: value == 'True',
+        label='Consent to contact',
+        widget=forms.Select,
+    )
+
+    class Meta:
+        model = Wali
+        fields = ('fullName', 'relationship', 'email', 'phone', 'consentToContact')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-check-input'
+            else:
+                field.widget.attrs['class'] = (
+                    'form-select' if isinstance(field.widget, forms.Select) else 'form-control'
+                )
+                field.widget.attrs['placeholder'] = field.label
 
 
 class ReligiousProfileForm(forms.ModelForm):

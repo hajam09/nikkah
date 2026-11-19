@@ -3,10 +3,12 @@ from django.contrib import admin
 from core.models import (
     CareerProfile,
     Education,
+    FamilyProfile,
     MatrimonialProfile,
     ProfileLocation,
     ReligiousProfile,
     User,
+    Wali,
 )
 
 
@@ -17,6 +19,16 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(MatrimonialProfile)
 class MatrimonialProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(FamilyProfile)
+class FamilyProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Wali)
+class WaliAdmin(admin.ModelAdmin):
     pass
 
 

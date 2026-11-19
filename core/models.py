@@ -113,31 +113,31 @@ class ProfileLocation(models.Model):
     preferredCountries = models.JSONField(default=list, blank=True)
 
 
-# class FamilyProfile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='familyProfile')
-#     fatherOccupation = models.CharField(max_length=150, blank=True)
-#     motherOccupation = models.CharField(max_length=150, blank=True)
-#     numberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
-#     familyBackground = models.TextField(blank=True)
-#     familyValues = models.TextField(blank=True)
-#
-#
-# class Wali(models.Model):
-#     class Relationship(models.TextChoices):
-#         FATHER = 'FATHER', 'Father'
-#         BROTHER = 'BROTHER', 'Brother'
-#         GRANDFATHER = 'GRANDFATHER', 'Grandfather'
-#         UNCLE = 'UNCLE', 'Uncle'
-#         OTHER = 'OTHER', 'Other'
-#
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wali')
-#     fullName = models.CharField(max_length=150)
-#     relationship = models.CharField(max_length=20, choices=Relationship.choices)
-#     email = models.EmailField(blank=True)
-#     phone = models.CharField(max_length=20, blank=True)
-#     consentToContact = models.BooleanField(default=False)
-#     isVerified = models.BooleanField(default=False)
-#
+class FamilyProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='familyProfile')
+    fatherOccupation = models.CharField(max_length=150, blank=True)
+    motherOccupation = models.CharField(max_length=150, blank=True)
+    numberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
+    familyBackground = models.TextField(blank=True)
+    familyValues = models.TextField(blank=True)
+
+
+class Wali(models.Model):
+    class Relationship(models.TextChoices):
+        FATHER = 'FATHER', 'Father'
+        BROTHER = 'BROTHER', 'Brother'
+        GRANDFATHER = 'GRANDFATHER', 'Grandfather'
+        UNCLE = 'UNCLE', 'Uncle'
+        OTHER = 'OTHER', 'Other'
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wali')
+    fullName = models.CharField(max_length=150)
+    relationship = models.CharField(max_length=20, choices=Relationship.choices)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    consentToContact = models.BooleanField(default=False)
+    isVerified = models.BooleanField(default=False)
+
 #
 # class PartnerPreference(models.Model):
 #     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreference')
