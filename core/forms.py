@@ -184,8 +184,12 @@ class ReligiousProfileForm(forms.ModelForm):
             'religiousPracticeDescription': forms.Textarea(attrs={'rows': 5}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, gender=None, **kwargs):
         super().__init__(*args, **kwargs)
+        if gender == MatrimonialProfile.Gender.MALE:
+            self.fields.pop('wearsHijab')
+            self.fields.pop('wearsNiqab')
+
         for field in self.fields.values():
             if isinstance(field.widget, (forms.Select, forms.NullBooleanSelect)):
                 css_class = 'form-select'

@@ -121,11 +121,15 @@ def waliSettingsView(request):
 
 @login_required
 def religiousProfileSettingsView(request):
-    profile = ReligiousProfile.objects.filter(user=request.user).first()
-    form = ReligiousProfileForm(request.POST or None, instance=profile)
+    profile = ReligiousProfile.objects.select_related('user__matrimonialProfile').filter(user=request.user).first()
+    gender = profile.user.matrimonialProfile.gender if profile and profile.user.matrimonialProfile else None
+    form = ReligiousProfileForm(request.POST or None, instance=profile, gender=gender)
     if request.method == 'POST' and form.is_valid():
         profile = form.save(commit=False)
         profile.user = request.user
+        if gender == MatrimonialProfile.Gender.MALE:
+            profile.wearsHijab = None
+            profile.wearsNiqab = None
         profile.save()
         messages.success(request, 'Your religious profile has been updated.')
         return redirect('core:settings-religious')
