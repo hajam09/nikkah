@@ -4,6 +4,7 @@
 
 {% block settings_content %}
     <h1 class="h3 mb-4">Personal profile</h1>
+    <div class="alert alert-success" role="status">Your personal account profile is set up.</div>
     <form method="post">
         {% csrf_token %}
         {% for error in form.non_field_errors %}

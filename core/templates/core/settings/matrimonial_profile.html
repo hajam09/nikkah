@@ -4,6 +4,11 @@
 
 {% block settings_content %}
     <h1 class="h3 mb-4">MatrimonialProfile</h1>
+    {% if is_creating_profile %}
+        <div class="alert alert-info" role="status">You do not have a matrimonial profile yet. Complete and save this form to create one.</div>
+    {% else %}
+        <div class="alert alert-success" role="status">Your matrimonial profile is set up.</div>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         {% for error in form.non_field_errors %}
