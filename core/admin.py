@@ -5,6 +5,7 @@ from core.models import (
     Education,
     FamilyProfile,
     MatrimonialProfile,
+    PartnerPreference,
     ProfileLocation,
     ReligiousProfile,
     User,
@@ -20,6 +21,13 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(MatrimonialProfile)
 class MatrimonialProfileAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(PartnerPreference)
+class PartnerPreferenceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'user', 'isDefault')
+    list_filter = ('isDefault',)
+    search_fields = ('name', 'user__username', 'user__email')
 
 
 @admin.register(FamilyProfile)

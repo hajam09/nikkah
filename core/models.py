@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import models, transaction
 
 
 class User(AbstractUser):
@@ -164,20 +164,42 @@ class Wali(models.Model):
     consentToContact = models.BooleanField(default=False)
     isVerified = models.BooleanField(default=False)
 
-#
-# class PartnerPreference(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreference')
-#     minAge = models.PositiveSmallIntegerField(null=True, blank=True)
-#     maxAge = models.PositiveSmallIntegerField(null=True, blank=True)
-#     minHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
-#     maxHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
-#     preferred_marital_status = models.JSONField(default=list, blank=True)
-#     preferredNationalities = models.JSONField(default=list, blank=True)
-#     preferredEthnicities = models.JSONField(default=list, blank=True)
-#     willingToAcceptChildren = models.BooleanField(null=True, blank=True)
-#     willingToRelocate = models.BooleanField(null=True, blank=True)
-#     preferredReligiousPractice = models.TextField(blank=True)
-#     additionalExpectations = models.TextField(blank=True)
+
+class PartnerPreference(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreferences')
+    name = models.CharField(max_length=100, default='Partner preference')
+    minAge = models.PositiveSmallIntegerField(null=True, blank=True)
+    maxAge = models.PositiveSmallIntegerField(null=True, blank=True)
+    # minHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
+    # maxHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
+    # preferredMaritalStatus = models.JSONField(default=list, blank=True)
+    # maxNumberOfChildren = models.PositiveSmallIntegerField(null=True, blank=True)
+    # willingToAcceptChildren = models.BooleanField(null=True, blank=True)
+    # preferredNationalities = models.JSONField(default=list, blank=True)
+    # preferredEthnicities = models.JSONField(default=list, blank=True)
+    # preferredMadhab = models.JSONField(default=list, blank=True)
+    # preferredPrayerFrequency = models.JSONField(default=list, blank=True)
+    # preferredQuranReading = models.JSONField(default=list, blank=True)
+    # observesFastingPreference = models.BooleanField(null=True, blank=True)
+    # verifiedPreference = models.BooleanField(null=True, blank=True)
+    # hijabPreference = models.BooleanField(null=True, blank=True)
+    # niqabPreference = models.BooleanField(null=True, blank=True)
+    # halalLifestylePreference = models.BooleanField(null=True, blank=True)
+    # qualificationPreference = models.JSONField(default=list, blank=True)
+    # preferredFieldsOfStudy = models.JSONField(default=list, blank=True)
+    # preferredInstitutions = models.JSONField(default=list, blank=True)
+    # minGraduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
+    # maxGraduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
+    # preferredEmploymentStatus = models.JSONField(default=list, blank=True)
+    # preferredOccupations = models.JSONField(default=list, blank=True)
+    # preferredIndustries = models.JSONField(default=list, blank=True)
+    # preferredCountries = models.JSONField(default=list, blank=True)
+    # preferredCities = models.JSONField(default=list, blank=True)
+    # partnerWillingToRelocate = models.BooleanField(null=True, blank=True)
+    # minNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
+    # maxNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
+    # additionalExpectations = models.TextField(blank=True)
+    isDefault = models.BooleanField(default=False)
 
 
 # class ProfileVerification(models.Model):

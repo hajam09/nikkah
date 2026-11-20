@@ -14,6 +14,11 @@ from core.views import (
     profileLocationSettingsView,
     religiousProfileSettingsView,
     waliSettingsView,
+    partnerPreferenceSettingsView,
+    createPartnerPreferenceView,
+    updatePartnerPreferenceView,
+    deletePartnerPreferenceView,
+    clonePartnerPreferenceView,
 )
 
 app_name = 'core'
@@ -31,5 +36,10 @@ urlpatterns = [
     path('settings/education/', educationSettingsView, name='settings-education'),
     path('settings/career/', careerProfileSettingsView, name='settings-career'),
     path('settings/location/', profileLocationSettingsView, name='settings-location'),
+    path('settings/preferences/', partnerPreferenceSettingsView, name='settings-preferences'),
+    path('settings/preferences/create/', createPartnerPreferenceView, name='settings-preferences-create'),
+    path('settings/preferences/<int:pk>/update/', updatePartnerPreferenceView, name='settings-preferences-update'),
+    path('settings/preferences/<int:pk>/delete/', deletePartnerPreferenceView, name='settings-preferences-delete'),
+    path('settings/preferences/<int:pk>/clone/', clonePartnerPreferenceView, name='settings-preferences-clone'),
     path('logout/', LogoutView.as_view(next_page='core:login-view'), name='logout-view'),
 ]

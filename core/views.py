@@ -1,7 +1,9 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.shortcuts import render, redirect
+from django.db import transaction
+from django.forms import model_to_dict
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 
 from core.forms import (
@@ -11,6 +13,7 @@ from core.forms import (
     LoginForm,
     MatrimonialProfileForm,
     PasswordChangeForm,
+    PartnerPreferenceForm,
     PersonalProfileForm,
     ProfileLocationForm,
     ReligiousProfileForm,
@@ -21,6 +24,7 @@ from core.models import (
     Education,
     FamilyProfile,
     MatrimonialProfile,
+    PartnerPreference,
     ProfileLocation,
     ReligiousProfile,
     Wali,
@@ -80,6 +84,7 @@ def matrimonialProfileSettingsView(request):
     return render(request, 'core/settings/matrimonial_profile.html', {
         'form': form,
         'active_setting': 'matrimonial',
+        'is_creating_profile': profile is None,
     })
 
 
@@ -122,7 +127,7 @@ def waliSettingsView(request):
 @login_required
 def religiousProfileSettingsView(request):
     profile = ReligiousProfile.objects.select_related('user__matrimonialProfile').filter(user=request.user).first()
-    gender = profile.user.matrimonialProfile.gender if profile and profile.user.matrimonialProfile else None
+    gender = profile.user.matrimonialProfile.gender if profile and hasattr(profile.user, 'matrimonialProfile') else None
     form = ReligiousProfileForm(request.POST or None, instance=profile, gender=gender)
     if request.method == 'POST' and form.is_valid():
         profile = form.save(commit=False)
@@ -193,3 +198,122 @@ def profileLocationSettingsView(request):
         'active_setting': 'location',
         'is_creating_profile': profile is None,
     })
+
+
+def _render_partner_preference_settings(
+    request,
+    create_form=None,
+    bound_forms=None,
+    editing_preference_id=None,
+):
+    preferences = PartnerPreference.objects.filter(user=request.user).order_by(
+        '-isDefault', 'id'
+    )
+    first_preference = preferences.order_by('id').first()
+    if first_preference and not preferences.filter(isDefault=True).exists():
+        first_preference.isDefault = True
+        first_preference.save(update_fields=['isDefault'])
+        preferences = PartnerPreference.objects.filter(user=request.user).order_by(
+            '-isDefault', 'id'
+        )
+    preference_count = preferences.count()
+    bound_forms = bound_forms or {}
+    preference_forms = [
+        {
+            'number': index,
+            'preference': preference,
+            'form': bound_forms.get(preference.pk) or PartnerPreferenceForm(
+                instance=preference,
+                prefix=f'preference-{preference.pk}',
+            ),
+            'is_open': preference.pk == editing_preference_id,
+        }
+        for index, preference in enumerate(preferences, start=1)
+    ]
+
+    return render(request, 'core/settings/partner_preferences.html', {
+        'active_setting': 'preferences',
+        'preference_forms': preference_forms,
+        'preference_count': preference_count,
+        'create_form': create_form or PartnerPreferenceForm(
+            prefix='create',
+        ),
+    })
+
+
+@login_required
+def partnerPreferenceSettingsView(request):
+    return _render_partner_preference_settings(request)
+
+
+@login_required
+def createPartnerPreferenceView(request):
+    if request.method != 'POST':
+        return redirect('core:settings-preferences')
+
+    form = PartnerPreferenceForm(
+        request.POST,
+        prefix='create',
+    )
+    if form.is_valid():
+        with transaction.atomic():
+            preference = form.save(commit=False)
+            preference.user = request.user
+            preference.save()
+        messages.success(request, 'Partner preference created.')
+        return redirect('core:settings-preferences')
+
+    return _render_partner_preference_settings(request, create_form=form)
+
+
+@login_required
+def updatePartnerPreferenceView(request, pk):
+    if request.method != 'POST':
+        return redirect('core:settings-preferences')
+
+    preference = get_object_or_404(PartnerPreference, pk=pk, user=request.user)
+    form = PartnerPreferenceForm(
+        request.POST,
+        instance=preference,
+        prefix=f'preference-{preference.pk}',
+    )
+    if form.is_valid():
+        with transaction.atomic():
+            preference = form.save(commit=False)
+            preference.save()
+        messages.success(request, 'Partner preference updated.')
+        return redirect('core:settings-preferences')
+
+    return _render_partner_preference_settings(
+        request,
+        bound_forms={preference.pk: form},
+        editing_preference_id=preference.pk,
+    )
+
+
+@login_required
+def deletePartnerPreferenceView(request, pk):
+    if request.method != 'POST':
+        return redirect('core:settings-preferences')
+
+    preference = get_object_or_404(PartnerPreference, pk=pk, user=request.user)
+    preference.delete()
+    messages.success(request, 'Partner preference deleted.')
+    return redirect('core:settings-preferences')
+
+
+@login_required
+def clonePartnerPreferenceView(request, pk):
+    if request.method != 'POST':
+        return redirect('core:settings-preferences')
+
+    preference = get_object_or_404(PartnerPreference, pk=pk, user=request.user)
+    copiedFields = model_to_dict(preference, exclude=('id', 'user', 'name', 'isDefault'))
+    PartnerPreference.objects.create(
+        user=request.user,
+        name=f'Copy of {preference.name}'[:100],
+        isDefault=False,
+        **copiedFields,
+    )
+    messages.success(request, 'Partner preference cloned.')
+    return redirect('core:settings-preferences')

@@ -44,4 +44,9 @@
        {% if active_setting == 'location' %}aria-current="page"{% endif %}>
         Location
     </a>
+    <a class="nav-link{% if active_setting == 'preferences' %} active{% endif %}"
+       href="{% url 'core:settings-preferences' %}"
+       {% if active_setting == 'preferences' %}aria-current="page"{% endif %}>
+        Partner preferences
+    </a>
 </nav>

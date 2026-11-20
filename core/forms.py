@@ -10,6 +10,7 @@ from core.models import (
     Education,
     FamilyProfile,
     MatrimonialProfile,
+    PartnerPreference,
     ProfileLocation,
     ReligiousProfile,
     User,
@@ -292,6 +293,24 @@ class ProfileLocationForm(forms.ModelForm):
         if len(countries) > 50:
             raise forms.ValidationError('Select no more than 50 preferred countries.')
         return countries
+
+
+class PartnerPreferenceForm(forms.ModelForm):
+    class Meta:
+        model = PartnerPreference
+        fields = ('name', 'minAge', 'maxAge', 'isDefault')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-check-input'
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs['class'] = 'form-select'
+            else:
+                field.widget.attrs['class'] = 'form-control'
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['placeholder'] = field.label
 
 
 class PasswordChangeForm(DjangoPasswordChangeForm):
