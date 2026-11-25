@@ -26,9 +26,47 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('select[multiple]').forEach(function (select) {
+                let previous = Array.from(select.selectedOptions, function (option) {
+                    return option.value;
+                });
+                let updating = false;
                 new TomSelect(select, {
                     plugins: ['remove_button'],
                     create: false,
+                    onChange: function () {
+                        if (updating) {
+                            return;
+                        }
+
+                        const selected = this.items.slice();
+                        const any = '__ANY__';
+                        const added = selected.filter(function (value) {
+                            return !previous.includes(value);
+                        });
+                        const realChoiceCount = Array.from(select.options).filter(function (option) {
+                            return option.value !== any;
+                        }).length;
+                        let next = selected;
+
+                        if (selected.includes(any) && selected.length > 1) {
+                            next = previous.includes(any) && added.some(function (value) {
+                                return value !== any;
+                            }) ? selected.filter(function (value) {
+                                return value !== any;
+                            }) : [any];
+                        } else if (selected.length === realChoiceCount) {
+                            next = [any];
+                        }
+
+                        if (next.length !== selected.length || next.some(function (value, index) {
+                            return value !== selected[index];
+                        })) {
+                            updating = true;
+                            this.setValue(next, true);
+                            updating = false;
+                        }
+                        previous = next;
+                    },
                 });
             });
         });

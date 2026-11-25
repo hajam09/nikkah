@@ -7,7 +7,9 @@ from core.models import (
     MatrimonialProfile,
     PartnerPreference,
     LocationProfile,
+    ProfileView,
     ReligiousProfile,
+    Shortlist,
     User,
     WaliProfile,
 )
@@ -244,3 +246,29 @@ class LocationProfileAdmin(admin.ModelAdmin):
         'residency',
     )
     list_select_related = ('user',)
+
+
+@admin.register(Shortlist)
+class ShortlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'profile', 'createdAt')
+    search_fields = (
+        'user__username',
+        'user__email',
+        'profile__username',
+        'profile__email',
+    )
+    list_select_related = ('user', 'profile')
+    date_hierarchy = 'createdAt'
+
+
+@admin.register(ProfileView)
+class ProfileViewAdmin(admin.ModelAdmin):
+    list_display = ('viewer', 'viewed', 'viewedAt')
+    search_fields = (
+        'viewer__username',
+        'viewer__email',
+        'viewed__username',
+        'viewed__email',
+    )
+    list_select_related = ('viewer', 'viewed')
+    date_hierarchy = 'viewedAt'

@@ -42,6 +42,7 @@ from core.models import (
     LocationProfile,
     ReligiousProfile,
     WaliProfile,
+    ProfileView,
 )
 from core.service import MATCHES_FILTER_FUNCTIONS
 
@@ -171,6 +172,7 @@ def matchesView(request):
 @login_required
 def profileView(request, pk):
     profile = MatrimonialProfile.objects.select_related(*MATRIMONIAL_PROFILE_RELATIONS).get(id=pk)
+    service.registerProfileView(request.user, profile.user)
     return render(request, 'core/profile.html', {
         'profile': profile,
         'previousProfile': None,

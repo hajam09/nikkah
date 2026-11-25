@@ -132,38 +132,40 @@ class PartnerPreference(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreference')
     minAge = models.PositiveSmallIntegerField(null=True, blank=True)
     maxAge = models.PositiveSmallIntegerField(null=True, blank=True)
+    minHeight = models.PositiveSmallIntegerField(null=True, blank=True)
+    maxHeight = models.PositiveSmallIntegerField(null=True, blank=True)
+    maritalStatus = models.JSONField(default=list, blank=True)
+    maxNumberOfChildren = models.PositiveSmallIntegerField(null=True, blank=True)
+    nationality = models.JSONField(default=list, blank=True)
+    physicalStatus = models.JSONField(default=list, blank=True)
+    eatingHabit = models.JSONField(default=list, blank=True)
+    smokingHabit = models.JSONField(default=list, blank=True)
+    languages = models.JSONField(default=list, blank=True)
+    residency = models.JSONField(default=list, blank=True)
+    citizenship = models.JSONField(default=list, blank=True)
+    qualification = models.JSONField(default=list, blank=True)
+    employmentStatus = models.JSONField(default=list, blank=True)
+    industry = models.JSONField(default=list, blank=True)
     madhab = models.JSONField(default=list, blank=True)
     prayerFrequency = models.JSONField(default=list, blank=True)
-    eatingHabit = models.JSONField(default=list, blank=True)
-    # minHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
-    # maxHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
-    # preferredMaritalStatus = models.JSONField(default=list, blank=True)
-    # maxNumberOfChildren = models.PositiveSmallIntegerField(null=True, blank=True)
-    # willingToAcceptChildren = models.BooleanField(null=True, blank=True)
-    # preferredNationalities = models.JSONField(default=list, blank=True)
-    # preferredEthnicities = models.JSONField(default=list, blank=True)
-    # preferredMadhab = models.JSONField(default=list, blank=True)
-    # preferredPrayerFrequency = models.JSONField(default=list, blank=True)
-    # preferredQuranReading = models.JSONField(default=list, blank=True)
-    # observesFastingPreference = models.BooleanField(null=True, blank=True)
-    # verifiedPreference = models.BooleanField(null=True, blank=True)
-    # hijabPreference = models.BooleanField(null=True, blank=True)
-    # niqabPreference = models.BooleanField(null=True, blank=True)
-    # halalLifestylePreference = models.BooleanField(null=True, blank=True)
-    # qualificationPreference = models.JSONField(default=list, blank=True)
-    # preferredFieldsOfStudy = models.JSONField(default=list, blank=True)
-    # preferredInstitutions = models.JSONField(default=list, blank=True)
-    # minGraduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
-    # maxGraduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
-    # preferredEmploymentStatus = models.JSONField(default=list, blank=True)
-    # preferredOccupations = models.JSONField(default=list, blank=True)
-    # preferredIndustries = models.JSONField(default=list, blank=True)
-    # preferredCountries = models.JSONField(default=list, blank=True)
-    # preferredCities = models.JSONField(default=list, blank=True)
-    # partnerWillingToRelocate = models.BooleanField(null=True, blank=True)
-    # minNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
-    # maxNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
-    # additionalExpectations = models.TextField(blank=True)
+    quranReading = models.JSONField(default=list, blank=True)
+    observesFasting = models.JSONField(default=list, blank=True)
+    familyStatus = models.JSONField(default=list, blank=True)
+    familyType = models.JSONField(default=list, blank=True)
+    familyValue = models.JSONField(default=list, blank=True)
+    additionalExpectations = models.TextField(blank=True)
+
+
+class Shortlist(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shortlistedProfiles')
+    profile = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='shortlistedBy')
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+
+class ProfileView(models.Model):
+    viewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profilesViewed')
+    viewed = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profileViews')
+    viewedAt = models.DateTimeField(auto_now_add=True)
 
 # class ProfileVerification(models.Model):
 #     class VerificationType(models.TextChoices):
@@ -275,29 +277,7 @@ class PartnerPreference(models.Model):
 #     updated_at = models.DateTimeField(auto_now=True)
 #
 #
-# class Shortlist(models.Model):
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#         related_name='shortlisted_profiles'
-#     )
-#
-#     profile = models.ForeignKey(
-#         MatrimonialProfile,
-#         on_delete=models.CASCADE,
-#         related_name='shortlisted_by'
-#     )
-#
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     class Meta:
-#         constraints = [
-#             models.UniqueConstraint(
-#                 fields=['user', 'profile'],
-#                 name='unique_user_shortlist'
-#             )
-#         ]
-#
+
 #
 # class Conversation(models.Model):
 #     class ConversationStatus(models.TextChoices):

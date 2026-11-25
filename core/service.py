@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from core.choices import Gender, CreatedBy, MaritalStatus, SmokingHabit
 from core.constants import MATRIMONIAL_PROFILE_RELATIONS
-from core.models import MatrimonialProfile, PartnerPreference, ReligiousProfile
+from core.models import MatrimonialProfile, PartnerPreference, ReligiousProfile, ProfileView
 
 
 def getGender(user):
@@ -27,6 +27,14 @@ def getBaseMatches(user):
     return MatrimonialProfile.objects.filter(gender=getOppositeGender(user)).select_related(
         *MATRIMONIAL_PROFILE_RELATIONS
     ).exclude(user=user)
+
+
+def getMatchesViewedUser(user):
+    return getBaseMatches(user).filter(user__profilesViewed__viewed=user)
+
+
+def getMatchesViewedByUser(user):
+    return getBaseMatches(user).filter(user__profileViews__viewer=user)
 
 
 def getMatchesJoinedRecently(user):
@@ -140,7 +148,15 @@ def getMatchesWillingToRelocate(user):
     return getBaseMatches(user).filter(locationProfile__willingToRelocate=True)
 
 
+def registerProfileView(viewer, viewed):
+    view = ProfileView.objects.filter(viewer=viewer, viewed=viewed).update(viewedAt=timezone.now())
+    if not view:
+        ProfileView.objects.create(viewer=viewer, viewed=viewed)
+
+
 MATCHES_FILTER_FUNCTIONS = {
+    'viewed-you': getMatchesViewedUser,
+    'viewed-by-you': getMatchesViewedByUser,
     'newly-joined': getMatchesJoinedRecently,
     'recently-active': getMatchesRecentlyActive,
     'created-by-family': getMatchesCreatedByParentOrRelative,

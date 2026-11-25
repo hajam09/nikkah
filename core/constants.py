@@ -1,5 +1,22 @@
 from django_countries import countries
 
+from core.choices import (
+    EatingHabit,
+    EducationLevel,
+    EmploymentStatus,
+    FamilyStatus,
+    FamilyType,
+    FamilyValue,
+    Industry,
+    Language,
+    MaritalStatus,
+    Madhab,
+    PhysicalStatus,
+    PrayerFrequency,
+    QuranReading,
+    SmokingHabit,
+)
+
 USER_PROFILE_RELATIONS = (
     'matrimonialProfile',
     'religiousProfile',
@@ -88,6 +105,24 @@ SETTINGS_PANEL = [
 
 COUNTRY_CHOICES = tuple((name, name) for _, name in countries)
 NIKKAH_AGE_CHOICES = tuple((str(age), str(age)) for age in range(18, 70))
+
+PARTNER_PREFERENCES_DETAIL_PANEL = {
+    'maritalStatus': MaritalStatus.choices,
+    'physicalStatus': PhysicalStatus.choices,
+    'eatingHabit': EatingHabit.choices,
+    'smokingHabit': SmokingHabit.choices,
+    'languages': Language.choices,
+    'qualification': EducationLevel.choices,
+    'employmentStatus': EmploymentStatus.choices,
+    'industry': Industry.choices,
+    'madhab': Madhab.choices,
+    'prayerFrequency': PrayerFrequency.choices,
+    'quranReading': QuranReading.choices,
+    'observesFasting': (('YES', 'Yes'), ('NO', 'No')),
+    'familyStatus': FamilyStatus.choices,
+    'familyType': FamilyType.choices,
+    'familyValue': FamilyValue.choices,
+}
 
 
 class MatchesPanel:

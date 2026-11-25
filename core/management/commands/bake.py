@@ -42,7 +42,10 @@ from core.models import (
     FamilyProfile,
     MatrimonialProfile,
     LocationProfile,
+    PartnerPreference,
+    ProfileView,
     ReligiousProfile,
+    Shortlist,
     WaliProfile,
 )
 
@@ -82,6 +85,7 @@ class Command(BaseCommand):
         LocationProfile.objects.filter(user=user).delete()
         FamilyProfile.objects.filter(user=user).delete()
         WaliProfile.objects.filter(user=user).delete()
+        PartnerPreference.objects.filter(user=user).delete()
 
     def seed_users(self, number_of_users, password):
         User = get_user_model()
@@ -118,8 +122,12 @@ class Command(BaseCommand):
         location_profiles = []
         family_profiles = []
         wali_profiles = []
+        partner_preferences = []
+        shortlists = []
+        profile_views = []
 
-        for user in get_user_model().objects.all():
+        users = list(get_user_model().objects.all())
+        for user in users:
             gender = random.choice(Gender.values)
             date_of_birth = self.faker.date_of_birth(
                 minimum_age=18,
@@ -219,6 +227,88 @@ class Command(BaseCommand):
                 isVerified=self.faker.boolean(chance_of_getting_true=30),
             ))
 
+            min_age = random.randint(18, 45)
+            min_height = random.choice(Height.values)
+            partner_preferences.append(PartnerPreference(
+                user=user,
+                minAge=min_age if random.choice([True, False]) else None,
+                maxAge=random.randint(min_age, 70) if random.choice([True, False]) else None,
+                minHeight=min_height if random.choice([True, False]) else None,
+                maxHeight=random.choice([
+                    value for value in Height.values if int(value) >= int(min_height)
+                ]) if random.choice([True, False]) else None,
+                maritalStatus=random.sample(
+                    MaritalStatus.values,
+                    k=random.randint(0, min(2, len(MaritalStatus.values))),
+                ),
+                maxNumberOfChildren=random.choice([None, 0, 1, 2, 3, 4, 5]),
+                nationality=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
+                physicalStatus=random.sample(
+                    PhysicalStatus.values,
+                    k=random.randint(0, len(PhysicalStatus.values)),
+                ),
+                eatingHabit=random.sample(
+                    EatingHabit.values,
+                    k=random.randint(0, len(EatingHabit.values)),
+                ),
+                smokingHabit=random.sample(
+                    SmokingHabit.values,
+                    k=random.randint(0, len(SmokingHabit.values)),
+                ),
+                languages=random.sample(
+                    Language.values,
+                    k=random.randint(0, min(3, len(Language.values))),
+                ),
+                residency=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
+                citizenship=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
+                qualification=random.sample(
+                    EducationLevel.values,
+                    k=random.randint(0, len(EducationLevel.values)),
+                ),
+                employmentStatus=random.sample(
+                    EmploymentStatus.values,
+                    k=random.randint(0, len(EmploymentStatus.values)),
+                ),
+                industry=random.sample(
+                    Industry.values,
+                    k=random.randint(0, min(3, len(Industry.values))),
+                ),
+                madhab=random.sample(
+                    Madhab.values,
+                    k=random.randint(0, min(2, len(Madhab.values))),
+                ),
+                prayerFrequency=random.sample(
+                    PrayerFrequency.values,
+                    k=random.randint(0, min(2, len(PrayerFrequency.values))),
+                ),
+                quranReading=random.sample(
+                    QuranReading.values,
+                    k=random.randint(0, min(2, len(QuranReading.values))),
+                ),
+                observesFasting=random.sample(['YES', 'NO'], k=random.randint(0, 1)),
+                familyStatus=random.sample(
+                    FamilyStatus.values,
+                    k=random.randint(0, min(2, len(FamilyStatus.values))),
+                ),
+                familyType=random.sample(
+                    FamilyType.values,
+                    k=random.randint(0, len(FamilyType.values)),
+                ),
+                familyValue=random.sample(
+                    FamilyValue.values,
+                    k=random.randint(0, len(FamilyValue.values)),
+                ),
+                additionalExpectations=self.faker.sentence() if random.choice([True, False]) else '',
+            ))
+
+            other_users = [other_user for other_user in users if other_user != user]
+            if other_users:
+                for viewed_user in random.sample(other_users, k=random.randint(1, min(10, len(other_users)))):
+                    profile_views.append(ProfileView(viewer=user, viewed=viewed_user))
+
+                for shortlisted_user in random.sample(other_users, k=random.randint(0, min(5, len(other_users)))):
+                    shortlists.append(Shortlist(user=user, profile=shortlisted_user))
+
         MatrimonialProfile.objects.bulk_create(matrimonial_profiles)
         ReligiousProfile.objects.bulk_create(religious_profiles)
         EducationProfile.objects.bulk_create(education_profiles)
@@ -226,3 +316,6 @@ class Command(BaseCommand):
         LocationProfile.objects.bulk_create(location_profiles)
         FamilyProfile.objects.bulk_create(family_profiles)
         WaliProfile.objects.bulk_create(wali_profiles)
+        PartnerPreference.objects.bulk_create(partner_preferences)
+        ProfileView.objects.bulk_create(profile_views)
+        Shortlist.objects.bulk_create(shortlists)

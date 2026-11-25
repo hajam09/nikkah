@@ -259,19 +259,62 @@ class WaliProfileForm(NikkahForm):
 
 class PartnerPreferenceForm(NikkahForm):
     ANY_CHOICE = (('__ANY__', 'Any'),)
+    AGE_CHOICES = (('', 'Any'),) + NIKKAH_AGE_CHOICES
+    HEIGHT_CHOICES = (('', 'Any'),) + tuple(Height.choices)
+    MAX_CHILDREN_CHOICES = (('', 'Any'),) + tuple((str(count), str(count)) for count in range(6))
 
+    minAge = forms.TypedChoiceField(choices=AGE_CHOICES, coerce=int, empty_value=None)
+    maxAge = forms.TypedChoiceField(choices=AGE_CHOICES, coerce=int, empty_value=None)
+    minHeight = forms.TypedChoiceField(choices=HEIGHT_CHOICES, coerce=int, empty_value=None)
+    maxHeight = forms.TypedChoiceField(choices=HEIGHT_CHOICES, coerce=int, empty_value=None)
+    maxNumberOfChildren = forms.TypedChoiceField(choices=MAX_CHILDREN_CHOICES, coerce=int, empty_value=None)
+    maritalStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(MaritalStatus.choices))
+    nationality = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
+    physicalStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(PhysicalStatus.choices))
+    eatingHabit = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EatingHabit.choices))
+    smokingHabit = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(SmokingHabit.choices))
+    languages = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Language.choices))
+    residency = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
+    citizenship = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
+    qualification = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EducationLevel.choices))
+    employmentStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EmploymentStatus.choices))
+    industry = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Industry.choices))
     madhab = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Madhab.choices))
     prayerFrequency = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(PrayerFrequency.choices))
-    eatingHabit = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EatingHabit.choices))
+    quranReading = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(QuranReading.choices))
+    observesFasting = forms.MultipleChoiceField(choices=ANY_CHOICE + (('YES', 'Yes'), ('NO', 'No')))
+    familyStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(FamilyStatus.choices))
+    familyType = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(FamilyType.choices))
+    familyValue = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(FamilyValue.choices))
+
     class Meta:
         model = PartnerPreference
         exclude = ('user',)
         labels = {
             'minAge': 'Minimum age',
             'maxAge': 'Maximum age',
+            'minHeight': 'Minimum height',
+            'maxHeight': 'Maximum height',
+            'maritalStatus': 'Marital status',
+            'maxNumberOfChildren': 'Maximum number of children',
+            'nationality': 'Nationality',
+            'physicalStatus': 'Physical status',
+            'eatingHabit': 'Eating habit',
+            'smokingHabit': 'Smoking habit',
+            'languages': 'Languages',
+            'residency': 'Preferred countries of residence',
+            'citizenship': 'Citizenship',
+            'qualification': 'Education level',
+            'employmentStatus': 'Employment status',
+            'industry': 'Industry',
             'madhab': 'Madhab',
             'prayerFrequency': 'Prayer frequency',
-            'eatingHabit': 'Eating habit',
+            'quranReading': 'Quran reading',
+            'observesFasting': 'Observes fasting',
+            'familyStatus': 'Family status',
+            'familyType': 'Family type',
+            'familyValue': 'Family values',
+            'additionalExpectations': 'Additional expectations',
         }
 
     def __init__(self, *args, **kwargs):
@@ -283,6 +326,27 @@ class PartnerPreferenceForm(NikkahForm):
 
             if name in labels:
                 field.label = labels[name]
+
+            if isinstance(field.widget, forms.SelectMultiple) and not self.is_bound and not self.initial.get(name):
+                self.initial[name] = [self.ANY_CHOICE[0][0]]
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        for name, field in self.fields.items():
+            if not isinstance(field.widget, forms.SelectMultiple):
+                continue
+
+            selected = cleaned_data.get(name, [])
+            realChoices = {
+                value for value, _ in field.choices
+                if value != self.ANY_CHOICE[0][0]
+            }
+
+            if self.ANY_CHOICE[0][0] in selected or realChoices.issubset(selected):
+                cleaned_data[name] = []
+
+        return cleaned_data
 
 
 class ProfileSearchForm(forms.Form):
