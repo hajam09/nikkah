@@ -18,8 +18,91 @@ body {
 }
 
 .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
     color: var(--nikkah-primary-dark);
     font-weight: 750;
+}
+
+.navbar-brand:hover {
+    color: var(--nikkah-primary);
+}
+
+.navbar-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 10px;
+    background: var(--nikkah-soft);
+    color: var(--nikkah-primary);
+    font-size: .95rem;
+}
+
+.navbar-actions > form {
+    margin: 0;
+}
+
+.navbar .navbar-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    min-height: 36px;
+    padding: .4rem .8rem;
+    border: 1px solid #f0d7d6;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--nikkah-primary-dark);
+    font-size: .85rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.navbar .navbar-action:hover,
+.navbar .navbar-action:focus-visible {
+    border-color: #e7b5b3;
+    background: var(--nikkah-soft);
+    color: var(--nikkah-primary-dark);
+    transform: translateY(-1px);
+}
+
+.navbar .navbar-login {
+    border-color: var(--nikkah-primary);
+    background: var(--nikkah-primary);
+    color: #fff;
+}
+
+.navbar .navbar-login:hover,
+.navbar .navbar-login:focus-visible {
+    border-color: #c75255;
+    background: #c75255;
+    color: #fff;
+}
+
+.navbar .navbar-logout {
+    border-color: transparent;
+    background: transparent;
+    color: var(--nikkah-muted);
+}
+
+.navbar .navbar-logout:hover,
+.navbar .navbar-logout:focus-visible {
+    border-color: #f0d7d6;
+    color: var(--nikkah-primary-dark);
+}
+
+.navbar-user {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem .65rem;
+    border-radius: 999px;
+    background: #f7f7f9;
+    color: var(--nikkah-muted);
+    font-size: .85rem;
 }
 
 .btn-primary {
