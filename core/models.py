@@ -1,6 +1,29 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.db import models, transaction
+from django.db import models
+from django.utils import timezone
+
+from core.choices import (
+    CreatedBy,
+    EatingHabit,
+    EducationLevel,
+    EmploymentStatus,
+    FamilyStatus,
+    FamilyType,
+    FamilyValue,
+    Gender,
+    Height,
+    HijabStatus,
+    Industry,
+    MaritalStatus,
+    Madhab,
+    PhysicalStatus,
+    PrayerFrequency,
+    QuranReading,
+    Relationship,
+    SmokingHabit,
+    Weight,
+)
 
 
 class User(AbstractUser):
@@ -14,75 +37,52 @@ class User(AbstractUser):
 
 
 class MatrimonialProfile(models.Model):
-    class Gender(models.TextChoices):
-        MALE = 'MALE', 'Male'
-        FEMALE = 'FEMALE', 'Female'
-
-    class MaritalStatus(models.TextChoices):
-        SINGLE = 'SINGLE', 'Single'
-        DIVORCED = 'DIVORCED', 'Divorced'
-        WIDOWED = 'WIDOWED', 'Widowed'
-        ANNULLED = 'ANNULLED', 'Annulled'
-
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='matrimonialProfile')
-    gender = models.CharField(max_length=10, blank=True, null=True, choices=Gender.choices)
-    dateOfBirth = models.DateField(blank=True, null=True)
-    height = models.PositiveSmallIntegerField(null=True, blank=True)
-    maritalStatus = models.CharField(max_length=10, blank=True, null=True, choices=MaritalStatus.choices)
-
+    createdBy = models.CharField(max_length=10, blank=True, null=True, choices=CreatedBy.choices)
+    gender = models.CharField(max_length=10, choices=Gender.choices)
+    dateOfBirth = models.DateField()
+    height = models.PositiveSmallIntegerField(choices=Height.choices)
+    weight = models.PositiveSmallIntegerField(choices=Weight.choices, null=True, blank=True)
+    maritalStatus = models.CharField(max_length=12, choices=MaritalStatus.choices)
+    physicalStatus = models.CharField(max_length=12, choices=PhysicalStatus.choices)
+    languages = models.JSONField(default=list, blank=True)
+    eatingHabit = models.CharField(max_length=20, blank=True, null=True, choices=EatingHabit.choices)
+    smokingHabit = models.CharField(max_length=20, blank=True, null=True, choices=SmokingHabit.choices)
     numberOfChildren = models.PositiveSmallIntegerField(default=0)
-    nationality = models.CharField(max_length=100, blank=True)
-    ethnicity = models.CharField(max_length=100, blank=True)
+    nationality = models.CharField(max_length=100, blank=True, null=True)
+    aboutMe = models.TextField(blank=True)
+
+    @property
+    def icons(self):
+        return [
+            'https://dummyimage.com/800x1000/000/fff&text=Icon+1',
+            'https://dummyimage.com/800x1000/000/fff&text=Icon+2',
+            'https://dummyimage.com/800x1000/000/fff&text=Icon+3',
+            'https://dummyimage.com/800x1000/000/fff&text=Icon+4',
+        ]
+
+    @property
+    def age(self):
+        today = timezone.localdate()
+        return today.year - self.dateOfBirth.year - (
+                (today.month, today.day) <
+                (self.dateOfBirth.month, self.dateOfBirth.day)
+        )
 
 
 class ReligiousProfile(models.Model):
-    class Madhab(models.TextChoices):
-        HANAFI = 'HANAFI', 'Hanafi'
-        SHAFI = 'SHAFI', 'Shafi'
-        MALIKI = 'MALIKI', 'Maliki'
-        HANBALI = 'HANBALI', 'Hanbali'
-        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-
-    class PrayerFrequency(models.TextChoices):
-        FIVE_TIMES = 'FIVE_TIMES', 'Five times daily'
-        MOST_PRAYERS = 'MOST_PRAYERS', 'Most prayers'
-        SOMETIMES = 'SOMETIMES', 'Sometimes'
-        RARELY = 'RARELY', 'Rarely'
-        NOT_PRACTICING = 'NOT_PRACTICING', 'Not currently practicing'
-        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-
-    class QuranReading(models.TextChoices):
-        DAILY = 'DAILY', 'Daily'
-        SEVERAL_TIMES_WEEK = 'SEVERAL_TIMES_WEEK', 'Several times a week'
-        WEEKLY = 'WEEKLY', 'Weekly'
-        OCCASIONALLY = 'OCCASIONALLY', 'Occasionally'
-        RAMADAN = 'RAMADAN', 'During Ramadan'
-        RARELY = 'RARELY', 'Rarely'
-        NOT_CURRENTLY = 'NOT_CURRENTLY', 'Not currently reading'
-        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='religiousProfile')
     madhab = models.CharField(max_length=20, choices=Madhab.choices, blank=True)
-    prayerFrequency = models.CharField(max_length=20, choices=PrayerFrequency.choices, blank=True)
-    quranReading = models.CharField(max_length=25, choices=QuranReading.choices, blank=True, )
+    prayerFrequency = models.CharField(max_length=25, choices=PrayerFrequency.choices, blank=True)
+    quranReading = models.CharField(max_length=25, choices=QuranReading.choices, blank=True)
     observesFasting = models.BooleanField(null=True, blank=True)
-    wearsHijab = models.BooleanField(null=True, blank=True)
-    wearsNiqab = models.BooleanField(null=True, blank=True)
-    halalLifestyle = models.BooleanField(default=True)
-    religiousPracticeDescription = models.TextField(blank=True)
+    hijabStatus = models.CharField(max_length=10, blank=True, null=True, choices=HijabStatus.choices)
+    halalLifestyle = models.BooleanField(null=True, blank=True)
+    description = models.TextField(blank=True)
 
 
-class Education(models.Model):
-    class EducationLevel(models.TextChoices):
-        HIGH_SCHOOL = 'HIGH_SCHOOL', 'High School'
-        DIPLOMA = 'DIPLOMA', 'Diploma'
-        BACHELORS = 'BACHELORS', "Bachelor's"
-        MASTERS = 'MASTERS', "Master's"
-        PHD = 'PHD', 'PhD'
-        ISLAMIC_STUDIES = 'ISLAMIC_STUDIES', 'Islamic Studies'
-        OTHER = 'OTHER', 'Other'
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='educations')
+class EducationProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='educationProfile')
     qualification = models.CharField(max_length=30, choices=EducationLevel.choices)
     institution = models.CharField(max_length=255, blank=True)
     fieldOfStudy = models.CharField(max_length=150, blank=True)
@@ -90,52 +90,20 @@ class Education(models.Model):
 
 
 class CareerProfile(models.Model):
-    class EmploymentStatus(models.TextChoices):
-        EMPLOYED = 'EMPLOYED', 'Employed'
-        SELF_EMPLOYED = 'SELF_EMPLOYED', 'Self Employed'
-        BUSINESS_OWNER = 'BUSINESS_OWNER', 'Business Owner'
-        STUDENT = 'STUDENT', 'Student'
-        UNEMPLOYED = 'UNEMPLOYED', 'Unemployed'
-        RETIRED = 'RETIRED', 'Retired'
-
-    class Industry(models.TextChoices):
-        IT = 'IT', 'Information Technology'
-        HEALTHCARE = 'HEALTHCARE', 'Healthcare'
-        EDUCATION = 'EDUCATION', 'Education'
-        FINANCE = 'FINANCE', 'Finance'
-        ENGINEERING = 'ENGINEERING', 'Engineering'
-        GOVERNMENT = 'GOVERNMENT', 'Government'
-        CONSTRUCTION = 'CONSTRUCTION', 'Construction'
-        RETAIL = 'RETAIL', 'Retail'
-        MANUFACTURING = 'MANUFACTURING', 'Manufacturing'
-        HOSPITALITY = 'HOSPITALITY', 'Hospitality'
-        LEGAL = 'LEGAL', 'Legal'
-        TRANSPORT = 'TRANSPORT', 'Transport'
-        AGRICULTURE = 'AGRICULTURE', 'Agriculture'
-        ARTS_MEDIA = 'ARTS_MEDIA', 'Arts and Media'
-        CONSULTING = 'CONSULTING', 'Consulting'
-        ENERGY_UTILITIES = 'ENERGY_UTILITIES', 'Energy and Utilities'
-        ENVIRONMENT = 'ENVIRONMENT', 'Environment'
-        INSURANCE = 'INSURANCE', 'Insurance'
-        NONPROFIT = 'NONPROFIT', 'Nonprofit'
-        REAL_ESTATE = 'REAL_ESTATE', 'Real Estate'
-        SCIENCE_RESEARCH = 'SCIENCE_RESEARCH', 'Science and Research'
-        TELECOMMUNICATIONS = 'TELECOMMUNICATIONS', 'Telecommunications'
-        OTHER = 'OTHER', 'Other'
-        PREFER_NOT_TO_SAY = 'PREFER_NOT_TO_SAY', 'Prefer not to say'
-
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='careerProfile')
     employmentStatus = models.CharField(max_length=30, choices=EmploymentStatus.choices, blank=True)
     occupation = models.CharField(max_length=150, blank=True)
     industry = models.CharField(max_length=30, choices=Industry.choices, blank=True)
 
 
-class ProfileLocation(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profileLocation')
+class LocationProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='locationProfile')
     town = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
-    country = models.CharField(max_length=100)
-    willingToRelocate = models.BooleanField(default=False)
+    nativePlace = models.CharField(max_length=100, blank=True)
+    residency = models.CharField(max_length=100)
+    citizenShip = models.JSONField(default=list, blank=True)
+    willingToRelocate = models.BooleanField(null=True, blank=True)
     preferredCountries = models.JSONField(default=list, blank=True)
 
 
@@ -144,30 +112,24 @@ class FamilyProfile(models.Model):
     fatherOccupation = models.CharField(max_length=150, blank=True)
     motherOccupation = models.CharField(max_length=150, blank=True)
     numberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
-    familyBackground = models.TextField(blank=True)
-    familyValues = models.TextField(blank=True)
+    familyValue = models.CharField(max_length=20, choices=FamilyValue.choices, blank=True)
+    familyType = models.CharField(max_length=20, choices=FamilyType.choices, blank=True)
+    familyStatus = models.CharField(max_length=20, choices=FamilyStatus.choices, blank=True)
+    aboutMyFamily = models.TextField(blank=True)
 
 
-class Wali(models.Model):
-    class Relationship(models.TextChoices):
-        FATHER = 'FATHER', 'Father'
-        BROTHER = 'BROTHER', 'Brother'
-        GRANDFATHER = 'GRANDFATHER', 'Grandfather'
-        UNCLE = 'UNCLE', 'Uncle'
-        OTHER = 'OTHER', 'Other'
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wali')
+class WaliProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='waliProfile')
     fullName = models.CharField(max_length=150)
     relationship = models.CharField(max_length=20, choices=Relationship.choices)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
-    consentToContact = models.BooleanField(default=False)
-    isVerified = models.BooleanField(default=False)
+    consentToContact = models.BooleanField(null=True, blank=True)
+    isVerified = models.BooleanField(null=True, blank=True)
 
 
 class PartnerPreference(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreferences')
-    name = models.CharField(max_length=100, default='Partner preference')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='partnerPreference')
     minAge = models.PositiveSmallIntegerField(null=True, blank=True)
     maxAge = models.PositiveSmallIntegerField(null=True, blank=True)
     # minHeightCm = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -199,8 +161,6 @@ class PartnerPreference(models.Model):
     # minNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
     # maxNumberOfSiblings = models.PositiveSmallIntegerField(null=True, blank=True)
     # additionalExpectations = models.TextField(blank=True)
-    isDefault = models.BooleanField(default=False)
-
 
 # class ProfileVerification(models.Model):
 #     class VerificationType(models.TextChoices):

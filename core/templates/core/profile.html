@@ -1,0 +1,186 @@
+{% extends "core/base.html" %}
+{% load profile_tags %}
+{% block title %}Nikkah - {{ profile.user.get_full_name }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-view">
+    <div class="profile-view-heading">
+        <a href="{% url 'core:matches-view' %}" class="back-link"><i class="bi bi-arrow-left"></i> All matches</a>
+        <div class="profile-navigation">
+            {% if previousProfile %}
+                <a href="{% url 'core:profile-view' previousProfile.pk %}" aria-label="Previous profile"><i class="bi bi-chevron-left"></i></a>
+            {% endif %}
+            {% if nextProfile %}
+                <a href="{% url 'core:profile-view' nextProfile.pk %}" aria-label="Next profile">Next <i class="bi bi-chevron-right"></i></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="profile-summary">
+        <div class="profile-photo">
+            {% if profile.icons %}
+                <img src="{{ profile.icons.0 }}" alt="{{ profile.user.get_full_name }}">
+            {% else %}
+                <i class="bi bi-person"></i>
+            {% endif %}
+        </div>
+        <div class="profile-summary-info">
+            <div class="profile-summary-top">
+                <div>
+                    <h1>{{ profile.user.get_full_name }}</h1>
+                    <p class="profile-username">{{ profile.user.username }}</p>
+                </div>
+                <div class="profile-summary-actions">
+                    <button type="button" class="icon-action" aria-label="Shortlist"><i class="bi bi-bookmark"></i></button>
+                    <button type="button" class="icon-action" aria-label="More options"><i class="bi bi-three-dots-vertical"></i></button>
+                </div>
+            </div>
+            <div class="profile-tags">
+                {% if profile.user.isVerified %}<span><i class="bi bi-patch-check-fill"></i> Verified</span>{% endif %}
+                {% if profile.get_maritalStatus_display %}<span>{{ profile.get_maritalStatus_display }}</span>{% endif %}
+                {% if profile.age %}<span>{{ profile.age }} yrs</span>{% endif %}
+                {% if profile.get_height_display %}<span>{{ profile.get_height_display }}</span>{% endif %}
+                {% if profile.user.locationProfile.residency %}<span>{{ profile.user.locationProfile.residency }}</span>{% endif %}
+            </div>
+            <p class="profile-created">
+                {% if profile.createdBy %}Profile created by {{ profile.get_createdBy_display|lower }}{% else %}Profile details{% endif %}
+                {% if profile.user.updatedAt %}<span> · Last seen recently</span>{% endif %}
+            </p>
+            <div class="profile-action-row">
+                <button type="button" class="outline-action"><i class="bi bi-x-lg"></i> Don't Show</button>
+                <button type="button" class="primary-action"><i class="bi bi-heart"></i> Send Interest</button>
+            </div>
+            <div class="profile-contact-actions">
+                <a href="tel:{{ profile.user.phone|default:'' }}" aria-label="Call profile"><i class="bi bi-telephone"></i></a>
+                <a href="mailto:{{ profile.user.email|default:'' }}" aria-label="Message profile"><i class="bi bi-chat-dots"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="profile-content-grid">
+        <div class="profile-main">
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-journal-text"></i></span> About {{ profile.user.first_name }}</h2>
+                {% if profile.aboutMe %}
+                    <p class="about-copy">{{ profile.aboutMe|linebreaksbr }}</p>
+                {% else %}
+                    <p class="about-copy text-muted">{{ profile.user.first_name }} has not added anything yet.</p>
+                {% endif %}
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-person"></i></span> Personal Information</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Age" profile.age " years" %}
+                    {% profile_detail "Height" profile.get_height_display %}
+                    {% profile_detail "Weight" profile.get_weight_display %}
+                    {% profile_detail "Gender" profile.get_gender_display %}
+                    {% profile_detail "Profile Created By" profile.get_createdBy_display %}
+                    {% profile_detail "Marital Status" profile.get_maritalStatus_display %}
+                    {% profile_detail "Number of Children" profile.numberOfChildren %}
+                    {% profile_detail "Nationality" profile.nationality %}
+                    {% profile_detail "Physical Status" profile.get_physicalStatus_display %}
+                    {% profile_detail "Eating Eating" profile.get_eatingHabit_display %}
+                    {% profile_detail "Smoking Eating" profile.get_smokingHabit_display %}
+                    {% profile_detail "Languages" profile.languages %}
+                </dl>
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-telephone"></i></span> Contact Information</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Phone" profile.user.phone %}
+                    {% profile_detail "Email" profile.user.email %}
+                </dl>
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-geo-alt"></i></span> Location Information</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Town" profile.user.locationProfile.town %}
+                    {% profile_detail "City" profile.user.locationProfile.city %}
+                    {% profile_detail "Native Place" profile.user.locationProfile.nativePlace %}
+                    {% profile_detail "Residency" profile.user.locationProfile.residency %}
+                    {% profile_detail "Citizenship" profile.user.locationProfile.citizenShip %}
+                    {% profile_detail "Willing to Relocate" profile.user.locationProfile.willingToRelocate %}
+                    {% if profile.user.locationProfile.willingToRelocate == True %}
+                        {% profile_detail "Preferred Countries" profile.user.locationProfile.preferredCountries %}
+                    {% endif %}
+                </dl>
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-stars"></i></span> Partner Preferences</h2>
+                {% if profile.user.partnerPreference %}
+                    <dl class="profile-details preference-details">
+                    <div><dt>Preferred Age</dt><dd>{{ profile.user.partnerPreference.minAge|default:"Any" }} - {{ profile.user.partnerPreference.maxAge|default:"Any" }} years</dd></div>
+                </dl>
+                {% else %}
+                    <p class="about-copy text-muted">This member has not added partner preferences yet.</p>
+                {% endif %}
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-mortarboard"></i></span> Education &amp; Career</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Qualification" profile.user.educationProfile.get_qualification_display %}
+                    {% profile_detail "Field of Study" profile.user.educationProfile.fieldOfStudy %}
+                    {% profile_detail "Institution" profile.user.educationProfile.institution %}
+                    {% profile_detail "Graduation Year" profile.user.educationProfile.graduationYear %}
+                    {% profile_detail "Employment" profile.user.careerProfile.get_employmentStatus_display %}
+                    {% profile_detail "Occupation" profile.user.careerProfile.occupation %}
+                    {% profile_detail "Industry" profile.user.careerProfile.get_industry_display %}
+                </dl>
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-book"></i></span> Religious Preferences</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Madhab" profile.user.religiousProfile.get_madhab_display %}
+                    {% profile_detail "Prayer Frequency" profile.user.religiousProfile.get_prayerFrequency_display %}
+                    {% profile_detail "Quran Reading" profile.user.religiousProfile.get_quranReading_display %}
+                    {% profile_detail "Observes Fasting" profile.user.religiousProfile.observesFasting %}
+                    {% profile_detail "Halal Lifestyle" profile.user.religiousProfile.halalLifestyle %}
+                    {% if profile.user.religiousProfile.hijabStatus %}
+                        {% profile_detail "Hijab Status" profile.user.religiousProfile.get_hijabStatus_display %}
+                    {% endif %}
+                </dl>
+            </section>
+
+            <section class="profile-panel">
+                <h2><span class="section-icon"><i class="bi bi-house-heart"></i></span> Family Information</h2>
+                <dl class="profile-details">
+                    {% profile_detail "Father's Occupation" profile.user.familyProfile.fatherOccupation %}
+                    {% profile_detail "Mother's Occupation" profile.user.familyProfile.motherOccupation %}
+                    {% profile_detail "Number of Siblings" profile.user.familyProfile.numberOfSiblings %}
+                    {% profile_detail "Family Status" profile.user.familyProfile.get_familyStatus_display %}
+                    {% profile_detail "Family Type" profile.user.familyProfile.get_familyType_display %}
+                    {% profile_detail "Family Values" profile.user.familyProfile.get_familyValue_display %}
+                    {% profile_detail "About my Family" profile.user.familyProfile.aboutMyFamily|linebreaksbr %}
+                </dl>
+            </section>
+        </div>
+
+        <aside class="profile-sidebar">
+            <div class="support-card">
+                <i class="bi bi-shield-check"></i>
+                <h2>Safety and privacy</h2>
+                <p>Keep personal conversations respectful and verify details before progressing.</p>
+            </div>
+            <div class="support-card">
+                <i class="bi bi-heart"></i>
+                <h2>Send an introduction</h2>
+                <p>Let this member know you are interested in getting to know them.</p>
+                <button type="button" class="primary-action w-100">Send Interest</button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,15 +1,19 @@
 {% extends "core/base.html" %}
-{% load settings_tags %}
+{% load settings_tags static %}
 
 {% block extra_scripts %}{% endblock %}
 
 {% block content %}
-    <div class="row g-4">
-        <aside class="col-12 col-md-3 col-lg-2">
-            {% settings_navigation active_setting %}
+    <div class="row g-4 settings-layout">
+        <aside class="col-12 col-md-3 col-lg-2 settings-sidebar">
+            {% settings_navigation_list %}
         </aside>
         <section class="col-12 col-md-9 col-lg-10">
-            {% block settings_content %}{% endblock %}
+            <div class="card settings-card">
+                <div class="card-body p-3 p-md-4">
+                    {% block settings_content %}{% endblock %}
+                </div>
+            </div>
         </section>
     </div>
 {% endblock %}

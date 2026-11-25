@@ -1,0 +1,73 @@
+<article class="match-profile-card" data-profile-url="{% url 'core:profile-view' profile.pk %}" role="link"
+         tabindex="0">
+
+    <div class="match-photo">
+        {% if profile.icons %}
+            <img src="{{ profile.icons.0 }}" alt="{{ profile.user.get_full_name|default:profile.user.username }}">
+        {% else %}
+            <div class="photo-placeholder"><i class="bi bi-person"></i></div>
+        {% endif %}
+
+    </div>
+
+    <div class="match-profile-details">
+        <div class="profile-name-row">
+            <div>
+                <strong>
+                    <a class="profile-name-link" href="{% url 'core:profile-view' profile.pk %}">
+                        {{ profile.user.get_full_name|default:profile.user.username }}
+                    </a>
+                </strong>
+            </div>
+
+            <div class="profile-actions">
+                <a href="tel:{{ profile.user.phone|default:'' }}" aria-label="Call">
+                    <i class="bi bi-telephone"></i>
+                </a>
+
+                <a href="mailto:{{ profile.user.email|default:'' }}" aria-label="Send message">
+                    <i class="bi bi-chat-dots"></i>
+                </a>
+            </div>
+        </div>
+
+        <p class="profile-meta">
+            <span>{{ profile.user.username }}</span>
+        </p>
+
+        <div class="profile-tags profile-tags-compact">
+            {% if profile.user.isVerified %}<span><i class="bi bi-patch-check-fill"></i> Verified</span>{% endif %}
+            {% if profile.get_maritalStatus_display %}<span>{{ profile.get_maritalStatus_display }}</span>{% endif %}
+            {% if profile.age %}<span>{{ profile.age }} yrs</span>{% endif %}
+            {% if profile.get_height_display %}<span>{{ profile.get_height_display }}</span>{% endif %}
+            {% if profile.user.locationProfile.residency %}<span>{{ profile.user.locationProfile.residency }}</span>{% endif %}
+        </div>
+
+        {% if profile.user.educations.qualification or profile.user.educations.fieldOfStudy %}
+            <p class="profile-meta">
+                {% if profile.user.educations.qualification %}
+                    <span>{{ profile.user.educations.get_qualification_display }}</span>
+                {% endif %}
+                {% if profile.user.educations.fieldOfStudy %}
+                    <span>{{ profile.user.educations.fieldOfStudy }}</span>
+                {% endif %}
+            </p>
+        {% endif %}
+
+        {% if profile.user.careerProfile.occupation %}
+            <p class="profile-note">
+                {{ profile.user.careerProfile.occupation }}
+            </p>
+        {% endif %}
+
+        <div class="profile-buttons">
+            <a class="call-button" href="tel:{{ profile.user.phone|default:'' }}">
+                <i class="bi bi-telephone"></i> Call Now
+            </a>
+
+            <a class="message-button" href="mailto:{{ profile.user.email|default:'' }}">
+                <i class="bi bi-envelope"></i> Send Message
+            </a>
+        </div>
+    </div>
+</article>

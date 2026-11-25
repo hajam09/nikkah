@@ -89,7 +89,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = 'core:dashboard-view'
+LOGIN_REDIRECT_URL = 'core:login-view'
 
 EMAIL_BACKEND = config('EMAIL_BACKEND', cast=str)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)

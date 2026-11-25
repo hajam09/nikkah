@@ -1,0 +1,28 @@
+{% if field.field.widget.input_type == 'checkbox' %}
+    <div class="row align-items-center g-2 py-2 settings-form-row">
+        <div class="col-12 col-md-4">
+            <span class="settings-field-label">{{ field.label }}</span>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-check">
+                {{ field }}
+                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="row align-items-center g-2 py-2 settings-form-row{% if field.field.widget.attrs.rows %} settings-textarea-row{% endif %}">
+        <div class="col-12 col-lg-3 col-md-4">
+            <label class="form-label mb-md-0 settings-field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        <div class="col-12 col-lg-9 col-md-8">
+            {{ field }}
+        </div>
+    </div>
+{% endif %}
+{% for error in field.errors %}
+    <div class="invalid-feedback d-block">{{ error }}</div>
+{% endfor %}
+{% if field.help_text %}
+    <div class="form-text mb-3">{{ field.help_text }}</div>
+{% endif %}

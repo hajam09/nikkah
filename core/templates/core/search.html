@@ -1,0 +1,270 @@
+{% extends "core/base.html" %}
+
+{% block title %}Nikkah - Search Profiles{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h1 class="h3 mb-4">Search profiles using the below criteria</h1>
+            <form method="get" action="{% url 'core:search-view' %}">
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Basic Details</h2>
+                    <div class="p-3 p-md-4">
+                        <div class="row align-items-center g-2 py-2">
+                            <div class="col-12 col-md-4"><span>Age</span></div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    {{ form.minAge }}
+                                    <span>to</span>
+                                    {{ form.maxAge }}
+                                </div>
+                                {% for error in form.minAge.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                {% for error in form.maxAge.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                        <div class="row align-items-center g-2 py-2">
+                            <div class="col-12 col-md-4"><span>Height</span></div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    {{ form.minHeight }}
+                                    <span>to</span>
+                                    {{ form.maxHeight }}
+                                </div>
+                                {% for error in form.minHeight.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                {% for error in form.maxHeight.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                        {% include "core/components/search-filter-field.html" with field=form.createdBy %}
+                        {% include "core/components/search-filter-field.html" with field=form.maritalStatus %}
+                        {% include "core/components/search-filter-field.html" with field=form.children %}
+                        {% include "core/components/search-filter-field.html" with field=form.language %}
+                        {% include "core/components/search-filter-field.html" with field=form.physicalStatus %}
+                        {% include "core/components/search-filter-field.html" with field=form.weight %}
+                        {% include "core/components/search-filter-field.html" with field=form.nationality %}
+                        {% include "core/components/search-filter-field.html" with field=form.eatingHabit %}
+                        {% include "core/components/search-filter-field.html" with field=form.smokingHabit %}
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Religious Details</h2>
+                    <div class="p-3 p-md-4">
+                        {% include "core/components/search-filter-field.html" with field=form.madhab %}
+                        {% include "core/components/search-filter-field.html" with field=form.prayerFrequency %}
+                        {% include "core/components/search-filter-field.html" with field=form.quranReading %}
+                        {% if form.hijabStatus %}
+                            {% include "core/components/search-filter-field.html" with field=form.hijabStatus %}
+                        {% endif %}
+                        {% include "core/components/search-filter-field.html" with field=form.observesFasting %}
+                        {% include "core/components/search-filter-field.html" with field=form.halalLifestyle %}
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Professional Details</h2>
+                    <div class="p-3 p-md-4">
+                        {% include "core/components/search-filter-field.html" with field=form.industry %}
+                        {% include "core/components/search-filter-field.html" with field=form.employmentStatus %}
+                        {% include "core/components/search-filter-field.html" with field=form.educationLevel %}
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Location Details</h2>
+                    <div class="p-3 p-md-4">
+                        {% include "core/components/search-filter-field.html" with field=form.residency %}
+                        {% include "core/components/search-filter-field.html" with field=form.city %}
+                        {% include "core/components/search-filter-field.html" with field=form.citizenship %}
+                        {% include "core/components/search-filter-field.html" with field=form.willingToRelocate %}
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Family Details</h2>
+                    <div class="p-3 p-md-4">
+                        {% include "core/components/search-filter-field.html" with field=form.familyStatus %}
+                        {% include "core/components/search-filter-field.html" with field=form.familyType %}
+                        {% include "core/components/search-filter-field.html" with field=form.familyValue %}
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Recently created profiles</h2>
+                    <div class="p-3 p-md-4">
+                        <p class="text-muted mb-2">Filter by when the account was created.</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for value, label in form.profileCreated.field.choices %}
+                                <input class="btn-check" type="radio" name="{{ form.profileCreated.html_name }}"
+                                       id="profile-created-{{ forloop.counter }}" value="{{ value }}"
+                                       {% if form.profileCreated.value == value %}checked{% endif %}>
+                                <label class="btn btn-outline-secondary rounded-pill"
+                                       for="profile-created-{{ forloop.counter }}">{{ label }}</label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="search-section">
+                    <h2 class="h5 search-section-heading">Profile Type</h2>
+                    <div class="p-3 p-md-4">
+                        <div class="form-check">
+                            {{ form.verified }}
+                            <label class="form-check-label" for="{{ form.verified.id_for_label }}">
+                                Verified profiles only
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-danger" type="submit">Search profiles</button>
+                    <a class="btn btn-outline-secondary" href="{% url 'core:search-view' %}">Clear filters</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <section class="mt-4" aria-labelledby="search-results-heading">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4 mb-0" id="search-results-heading">Matching profiles</h2>
+            <span class="text-muted">{{ profiles.paginator.count }} found</span>
+        </div>
+        <div class="row g-3">
+            {% for profile in profiles %}
+                <div class="col-12 col-lg-6">
+                    {% include "core/components/match-profile-card.html" with profile=profile %}
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="status">No profiles match these criteria yet.</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if profiles.has_other_pages %}
+            <nav class="mt-4" aria-label="Profile search results pages">
+                <ul class="pagination justify-content-center">
+                    {% if profiles.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if queryParameters %}{{ queryParameters }}&amp;{% endif %}page={{ profiles.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ profiles.number }} of {{ profiles.paginator.num_pages }}</span>
+                    </li>
+                    {% if profiles.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if queryParameters %}{{ queryParameters }}&amp;{% endif %}page={{ profiles.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchForm = document.querySelector('form[method="get"]');
+            searchForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const params = new URLSearchParams();
+                new FormData(searchForm).forEach(function (value, name) {
+                    if (value !== '' && value !== '__ANY__') {
+                        params.append(name, value);
+                    }
+                });
+
+                const url = new URL(searchForm.action, window.location.href);
+                url.search = params.toString();
+                window.location.assign(url);
+            });
+
+            document.querySelectorAll('[data-profile-url]').forEach(function (card) {
+                const openProfile = function () {
+                    window.location.href = card.dataset.profileUrl;
+                };
+                card.addEventListener('click', function (event) {
+                    if (event.target.closest('.call-button, .message-button, a[href^="tel:"], a[href^="mailto:"]')) {
+                        return;
+                    }
+                    openProfile();
+                });
+                card.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openProfile();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.search-section select').forEach(function (select) {
+                const isMulti = select.multiple;
+                const realValues = isMulti
+                    ? Array.from(select.options)
+                        .map(function (option) { return option.value; })
+                        .filter(function (value) { return value && value !== '__ANY__'; })
+                    : [];
+
+                const tomSelect = new TomSelect(select, {
+                    plugins: isMulti ? ['remove_button', 'checkbox_options'] : [],
+                    create: false,
+                    allowEmptyOption: !isMulti,
+                    maxItems: isMulti ? null : 1,
+                    hideSelected: false,
+                    closeAfterSelect: false,
+                });
+
+                if (!isMulti) return;
+
+                const initialValues = tomSelect.getValue();
+                if (!initialValues.length) {
+                    tomSelect.setValue(['__ANY__'], true);
+                } else if (
+                    initialValues.length > 0 &&
+                    !initialValues.includes('__ANY__') &&
+                    realValues.length &&
+                    realValues.every(function (value) { return initialValues.includes(value); })
+                ) {
+                    tomSelect.setValue(['__ANY__'], true);
+                }
+
+                let previousValues = tomSelect.getValue();
+
+                tomSelect.on('change', function (values) {
+                    const selected = Array.isArray(values) ? values : (values ? [values] : []);
+                    const previousHadAny = previousValues.includes('__ANY__');
+
+                    if (!selected.length) {
+                        tomSelect.setValue(['__ANY__'], true);
+                    } else if (selected.includes('__ANY__') && selected.length > 1) {
+                        if (previousHadAny) {
+                            tomSelect.removeItem('__ANY__', true);
+                        } else {
+                            tomSelect.setValue(['__ANY__'], true);
+                        }
+                    } else if (realValues.length && realValues.every(function (value) {
+                        return selected.includes(value);
+                    })) {
+                        tomSelect.setValue(['__ANY__'], true);
+                    }
+
+                    previousValues = tomSelect.getValue();
+                });
+            });
+        });
+    </script>
+{% endblock %}

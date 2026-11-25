@@ -1,8 +1,120 @@
 {% extends "core/base.html" %}
 
+{% block title %}Nikkah | A thoughtful path to marriage{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <h1 class="h3">Welcome{% if user.is_authenticated %}, {{ user.username }}{% endif %}</h1>
-    {% if not user.is_authenticated %}
-        <p><a href="{% url 'core:login-view' %}">Log in</a> to continue.</p>
+    {% if user.is_authenticated %}
+        <section class="welcome-hero">
+            <div class="welcome-copy">
+                <span class="eyebrow">YOUR NIKKAH JOURNEY</span>
+                <h1>Welcome{{ user.first_name }}</h1>
+                <p>Build a thoughtful profile, explore potential matches, and take the next step when you’re ready.</p>
+                <div class="welcome-actions">
+                    <a class="btn btn-primary" href="{% url 'core:matches-view' %}">Explore matches</a>
+                    <a class="btn btn-outline-secondary" href="{% url 'core:search-view' %}">Search profiles</a>
+                </div>
+            </div>
+            <div class="welcome-art" aria-hidden="true"><i class="bi bi-heart"></i><span></span></div>
+        </section>
+
+        <div class="home-grid">
+            <section class="home-card setup-card">
+                <div class="home-card-heading">
+                    <div>
+                        <span class="eyebrow">GET STARTED</span>
+                        <h2>Complete your profile</h2>
+                    </div>
+                    <span class="setup-count">{{ completedSections }}/{{ setupSections|length }}</span>
+                </div>
+                <p class="text-muted">A more complete profile helps others understand what matters to you.</p>
+                <progress class="setup-progress" value="{{ setupPercentage }}" max="100"
+                          aria-label="Profile completion: {{ setupPercentage }} percent">{{ setupPercentage }}%</progress>
+                <ul class="setup-list">
+                    {% for section in setupSections %}
+                        <li>
+                            <span class="setup-status{% if section.complete %} is-complete{% endif %}">
+                                <i class="bi {% if section.complete %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                            </span>
+                            <span>{{ section.label }}</span>
+                            <a href="{% url section.url %}" aria-label="{% if section.complete %}Edit{% else %}Add{% endif %} {{ section.label }}">
+                                {% if section.complete %}Edit{% else %}Add{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="home-card quick-links-card">
+                <span class="eyebrow">YOUR SPACE</span>
+                <h2>What would you like to do?</h2>
+                <a class="quick-link" href="{% url 'core:matches-view' %}">
+                    <span class="quick-link-icon"><i class="bi bi-hearts"></i></span>
+                    <span><strong>Browse matches</strong><small>Explore profiles selected for you</small></span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <a class="quick-link" href="{% url 'core:search-view' %}">
+                    <span class="quick-link-icon"><i class="bi bi-search"></i></span>
+                    <span><strong>Search profiles</strong><small>Find profiles using your criteria</small></span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <a class="quick-link" href="{% url 'core:settings-matrimonial' %}">
+                    <span class="quick-link-icon"><i class="bi bi-person-lines-fill"></i></span>
+                    <span><strong>Manage your profile</strong><small>Update your details and preferences</small></span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </section>
+        </div>
+
+        <section class="home-note">
+            <i class="bi bi-shield-check"></i>
+            <div>
+                <h2>Take your time</h2>
+                <p class="mb-0">Share only what you’re comfortable sharing. You can update your profile details and preferences at any time.</p>
+            </div>
+        </section>
+    {% else %}
+        <section class="landing-hero">
+            <div class="landing-copy">
+                <span class="eyebrow">A THOUGHTFUL PATH TO MARRIAGE</span>
+                <h1>Meet with intention.<br><span>Build a future together.</span></h1>
+                <p>Create a profile that reflects who you are and what you’re looking for. Explore potential matches at your own pace.</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'core:login-view' %}">Log in to get started <i class="bi bi-arrow-right"></i></a>
+                <div class="landing-points">
+                    <span><i class="bi bi-check-circle"></i> Detailed profiles</span>
+                    <span><i class="bi bi-check-circle"></i> Preferences that matter to you</span>
+                    <span><i class="bi bi-check-circle"></i> Browse at your own pace</span>
+                </div>
+            </div>
+            <div class="landing-visual" aria-hidden="true">
+                <div class="visual-orbit orbit-one"></div>
+                <div class="visual-orbit orbit-two"></div>
+                <div class="visual-heart"><i class="bi bi-heart-fill"></i></div>
+                <div class="visual-caption"><i class="bi bi-stars"></i> Begin your journey</div>
+            </div>
+        </section>
+
+        <section class="landing-features">
+            <article>
+                <span><i class="bi bi-person-vcard"></i></span>
+                <h2>Tell your story</h2>
+                <p>Build a profile with personal, family, education, and lifestyle details that help others get to know you.</p>
+            </article>
+            <article>
+                <span><i class="bi bi-sliders"></i></span>
+                <h2>Focus on what matters</h2>
+                <p>Set partner preferences to make it easier to find profiles that align with your goals.</p>
+            </article>
+            <article>
+                <span><i class="bi bi-search-heart"></i></span>
+                <h2>Explore thoughtfully</h2>
+                <p>Browse matches and search profiles at your own pace, with the details you choose to share.</p>
+            </article>
+        </section>
     {% endif %}
+
 {% endblock %}
