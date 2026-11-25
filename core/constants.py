@@ -165,8 +165,6 @@ MATCHES_PANEL_RELIGIOUS_AND_LIFESTYLE_PREFERENCES = [
                  'Matches with your preferred Islamic school', 'Matches by madhab'),
     MatchesPanel('prayer', 'bi bi-sun', 'Prayer practice',
                  'Matches with similar prayer habits', 'Matches by prayer practice'),
-    MatchesPanel('hijab', 'bi bi-person-bounding-box', 'Hijab or niqab',
-                 'Matches with your preferred hijab status', 'Matches by hijab preference'),
     MatchesPanel('eating', 'bi bi-egg-fried', 'Eating preference',
                  'Matches with compatible eating habits', 'Matches by eating preference'),
     MatchesPanel('non-smoker', 'bi bi-ban', 'Non-smokers',

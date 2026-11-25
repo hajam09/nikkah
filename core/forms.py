@@ -258,31 +258,31 @@ class WaliProfileForm(NikkahForm):
 
 
 class PartnerPreferenceForm(NikkahForm):
+    ANY_CHOICE = (('__ANY__', 'Any'),)
+
+    madhab = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Madhab.choices))
+    prayerFrequency = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(PrayerFrequency.choices))
+    eatingHabit = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EatingHabit.choices))
     class Meta:
         model = PartnerPreference
         exclude = ('user',)
         labels = {
             'minAge': 'Minimum age',
             'maxAge': 'Maximum age',
+            'madhab': 'Madhab',
+            'prayerFrequency': 'Prayer frequency',
+            'eatingHabit': 'Eating habit',
         }
-
-
-class ProfileSearchFormV1(forms.Form):
-    AGE_CHOICES = (('', 'Any'),) + tuple((str(age), str(age)) for age in range(18, 81))
-    HEIGHT_CHOICES = (('', 'Any'),) + tuple(Height.choices)
-    ANY_CHOICE = (('__ANY__', 'Any'),)
-
-    minAge = forms.ChoiceField(choices=AGE_CHOICES, required=False)
-    maxAge = forms.ChoiceField(choices=AGE_CHOICES, required=False)
-
-    minHeight = forms.ChoiceField(choices=HEIGHT_CHOICES, required=False)
-    maxHeight = forms.ChoiceField(choices=HEIGHT_CHOICES, required=False)
-
-    createdBy = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(CreatedBy.choices), required=False)
-    maritalStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(MaritalStatus.choices), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        labels = self.Meta.labels
+        for name, field in self.fields.items():
+            field.required = False
+
+            if name in labels:
+                field.label = labels[name]
 
 
 class ProfileSearchForm(forms.Form):
@@ -337,7 +337,7 @@ class ProfileSearchForm(forms.Form):
     educationLevel = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EducationLevel.choices))
 
     residency = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
-    city = forms.CharField(required=False, max_length=100)
+    city = forms.CharField(max_length=100)
     citizenship = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
     willingToRelocate = forms.MultipleChoiceField(choices=YES_NO_CHOICES)
 
@@ -347,8 +347,8 @@ class ProfileSearchForm(forms.Form):
     familyValue = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(FamilyValue.choices))
 
     # Profile
-    profileCreated = forms.ChoiceField(choices=CREATED_CHOICES, required=False)
-    verified = forms.BooleanField(required=False)
+    profileCreated = forms.ChoiceField(choices=CREATED_CHOICES)
+    verified = forms.BooleanField()
 
     class Meta:
         labels = {

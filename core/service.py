@@ -5,12 +5,15 @@ from django.utils import timezone
 
 from core.choices import Gender, CreatedBy, MaritalStatus, SmokingHabit
 from core.constants import MATRIMONIAL_PROFILE_RELATIONS
-from core.models import MatrimonialProfile
+from core.models import MatrimonialProfile, PartnerPreference, ReligiousProfile
+
+
+def getGender(user):
+    return MatrimonialProfile.objects.values_list('gender', flat=True).get(user=user)
 
 
 def getOppositeGender(user):
-    gender = MatrimonialProfile.objects.values_list('gender', flat=True).get(user=user)
-    return Gender.FEMALE if gender == Gender.MALE else Gender.MALE
+    return Gender.FEMALE if getGender(user) == Gender.MALE else Gender.MALE
 
 
 def getDateOfBirthFromAge(age):
@@ -84,6 +87,51 @@ def getMatches36AndAbove(user):
     return getBaseMatches(user).filter(dateOfBirth__lte=getDateOfBirthFromAge(36))
 
 
+def getMatchesByMadhab(user):
+    matches = getBaseMatches(user)
+    preference = PartnerPreference.objects.filter(user=user).first()
+
+    if preference:
+        madhabList = preference.madhab
+    else:
+        profile = ReligiousProfile.objects.filter(user=user).first()
+        madhabList = [profile.madhab] if profile and profile.madhab else []
+
+    if not madhabList or '__ANY__' in madhabList:
+        return matches
+    return matches.filter(user__religiousProfile__madhab__in=madhabList)
+
+
+def getMatchesByPrayerFrequency(user):
+    matches = getBaseMatches(user)
+    preference = PartnerPreference.objects.filter(user=user).first()
+
+    if preference:
+        prayerFrequencyList = preference.prayerFrequency
+    else:
+        profile = ReligiousProfile.objects.filter(user=user).first()
+        prayerFrequencyList = [profile.prayerFrequency] if profile and profile.prayerFrequency else []
+
+    if not prayerFrequencyList or '__ANY__' in prayerFrequencyList:
+        return matches
+    return matches.filter(user__religiousProfile__prayerFrequency__in=prayerFrequencyList)
+
+
+def getMatchesByEatingHabit(user):
+    matches = getBaseMatches(user)
+    preference = PartnerPreference.objects.filter(user=user).first()
+
+    if preference:
+        eatingHabitList = preference.eatingHabit
+    else:
+        profile = MatrimonialProfile.objects.filter(user=user).first()
+        eatingHabitList = [profile.eatingHabit] if profile and profile.eatingHabit else []
+
+    if not eatingHabitList or '__ANY__' in eatingHabitList:
+        return matches
+    return matches.filter(eatingHabit__in=eatingHabitList)
+
+
 def getMatchesNonSmokers(user):
     return getBaseMatches(user).filter(smokingHabit=SmokingHabit.NON_SMOKER)
 
@@ -104,6 +152,9 @@ MATCHES_FILTER_FUNCTIONS = {
     'age-18-25': getMatchesBetween18And25,
     'age-26-35': getMatchesBetween26And35,
     'age-36-plus': getMatches36AndAbove,
+    'madhab': getMatchesByMadhab,
+    'prayer': getMatchesByPrayerFrequency,
+    'eating': getMatchesByEatingHabit,
     'non-smoker': getMatchesNonSmokers,
     'relocate': getMatchesWillingToRelocate,
 }
