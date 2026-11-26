@@ -61,7 +61,7 @@ MATRIMONIAL_PROFILE_FIELD_FILTERS = {
     'employmentStatus': 'user__careerProfile__employmentStatus__in',
 
     # EducationProfile
-    'educationLevel': 'user__educationProfile__qualification__in',
+    'educationLevel': 'user__educationProfile__educationLevel__in',
 
     # LocationProfile
     'residency': 'user__locationProfile__residency__in',
@@ -105,14 +105,25 @@ SETTINGS_PANEL = [
 
 COUNTRY_CHOICES = tuple((name, name) for _, name in countries)
 NIKKAH_AGE_CHOICES = tuple((str(age), str(age)) for age in range(18, 70))
+ANY_PREFERENCE = '__ANY__'
+FIVE_OR_MORE_CHILDREN = '5PLUS'
+CHILDREN_CHOICES = (
+    ('0', 'No children'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    (FIVE_OR_MORE_CHILDREN, '5 or more'),
+)
 
 PARTNER_PREFERENCES_DETAIL_PANEL = {
     'maritalStatus': MaritalStatus.choices,
+    'children': CHILDREN_CHOICES,
     'physicalStatus': PhysicalStatus.choices,
     'eatingHabit': EatingHabit.choices,
     'smokingHabit': SmokingHabit.choices,
     'languages': Language.choices,
-    'qualification': EducationLevel.choices,
+    'educationLevel': EducationLevel.choices,
     'employmentStatus': EmploymentStatus.choices,
     'industry': Industry.choices,
     'madhab': Madhab.choices,

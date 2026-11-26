@@ -43,10 +43,10 @@
             {% if profile.user.locationProfile.residency %}<span>{{ profile.user.locationProfile.residency }}</span>{% endif %}
         </div>
 
-        {% if profile.user.educations.qualification or profile.user.educations.fieldOfStudy %}
+        {% if profile.user.educations.educationLevel or profile.user.educations.fieldOfStudy %}
             <p class="profile-meta">
-                {% if profile.user.educations.qualification %}
-                    <span>{{ profile.user.educations.get_qualification_display }}</span>
+                {% if profile.user.educations.educationLevel %}
+                    <span>{{ profile.user.educations.get_educationLevel_display }}</span>
                 {% endif %}
                 {% if profile.user.educations.fieldOfStudy %}
                     <span>{{ profile.user.educations.fieldOfStudy }}</span>

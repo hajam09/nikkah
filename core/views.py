@@ -18,7 +18,8 @@ from core.constants import (
     MATCHES_PANEL_SECTIONS,
     MATRIMONIAL_PROFILE_RELATIONS,
     MATRIMONIAL_PROFILE_FIELD_FILTERS,
-    MATRIMONIAL_PROFILE_BOOLEAN_FIELD_FILTERS
+    MATRIMONIAL_PROFILE_BOOLEAN_FIELD_FILTERS,
+    FIVE_OR_MORE_CHILDREN,
 )
 from core.forms import (
     CareerProfileForm,
@@ -98,10 +99,10 @@ def searchView(request):
         if filters['children']:
             childFilters = Q()
             for choice in filters['children']:
-                if choice == '5PLUS':
-                    childFilters |= Q(numberOfChildren__gte=5)
+                if choice == FIVE_OR_MORE_CHILDREN:
+                    childFilters |= Q(children__gte=5)
                 else:
-                    childFilters |= Q(numberOfChildren=int(choice))
+                    childFilters |= Q(children=int(choice))
 
             profiles = profiles.filter(childFilters)
 

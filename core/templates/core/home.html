@@ -11,7 +11,7 @@
         <section class="welcome-hero">
             <div class="welcome-copy">
                 <span class="eyebrow">YOUR NIKKAH JOURNEY</span>
-                <h1>Welcome{{ user.first_name }}</h1>
+                <h1>Welcome {{ user.first_name }}</h1>
                 <p>Build a thoughtful profile, explore potential matches, and take the next step when you’re ready.</p>
                 <div class="welcome-actions">
                     <a class="btn btn-primary" href="{% url 'core:matches-view' %}">Explore matches</a>

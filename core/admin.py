@@ -181,13 +181,13 @@ class ReligiousProfileAdmin(admin.ModelAdmin):
 class EducationAdmin(admin.ModelAdmin):
     list_display = (
         'user',
-        'qualification',
+        'educationLevel',
         'institution',
         'fieldOfStudy',
         'graduationYear',
     )
     list_filter = (
-        'qualification',
+        'educationLevel',
         'graduationYear',
     )
     search_fields = (

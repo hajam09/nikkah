@@ -83,7 +83,7 @@
                     {% profile_detail "Gender" profile.get_gender_display %}
                     {% profile_detail "Profile Created By" profile.get_createdBy_display %}
                     {% profile_detail "Marital Status" profile.get_maritalStatus_display %}
-                    {% profile_detail "Number of Children" profile.numberOfChildren %}
+                    {% profile_detail "Number of Children" profile.children %}
                     {% profile_detail "Nationality" profile.nationality %}
                     {% profile_detail "Physical Status" profile.get_physicalStatus_display %}
                     {% profile_detail "Eating Habit" profile.get_eatingHabit_display %}
@@ -125,7 +125,7 @@
                             {% preference_detail "Minimum height" preference.minHeight "minHeight" %}
                             {% preference_detail "Maximum height" preference.maxHeight "maxHeight" %}
                             {% preference_detail "Marital status" preference.maritalStatus "maritalStatus" %}
-                            {% preference_detail "Maximum number of children" preference.maxNumberOfChildren "maxNumberOfChildren" %}
+                            {% preference_detail "Children" preference.children "children" %}
                             {% preference_detail "Nationality" preference.nationality "nationality" %}
                             {% preference_detail "Physical status" preference.physicalStatus "physicalStatus" %}
                             {% preference_detail "Eating habit" preference.eatingHabit "eatingHabit" %}
@@ -133,7 +133,7 @@
                             {% preference_detail "Languages" preference.languages "languages" %}
                             {% preference_detail "Preferred countries of residence" preference.residency "residency" %}
                             {% preference_detail "Citizenship" preference.citizenship "citizenship" %}
-                            {% preference_detail "Education level" preference.qualification "qualification" %}
+                            {% preference_detail "Education level" preference.educationLevel "educationLevel" %}
                             {% preference_detail "Employment status" preference.employmentStatus "employmentStatus" %}
                             {% preference_detail "Industry" preference.industry "industry" %}
                             {% preference_detail "Madhab" preference.madhab "madhab" %}
@@ -154,7 +154,7 @@
             <section class="profile-panel">
                 <h2><span class="section-icon"><i class="bi bi-mortarboard"></i></span> Education &amp; Career</h2>
                 <dl class="profile-details">
-                    {% profile_detail "Qualification" profile.user.educationProfile.get_qualification_display %}
+                    {% profile_detail "Education Level" profile.user.educationProfile.get_educationLevel_display %}
                     {% profile_detail "Field of Study" profile.user.educationProfile.fieldOfStudy %}
                     {% profile_detail "Institution" profile.user.educationProfile.institution %}
                     {% profile_detail "Graduation Year" profile.user.educationProfile.graduationYear %}

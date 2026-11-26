@@ -30,8 +30,7 @@
                     return option.value;
                 });
                 let updating = false;
-                new TomSelect(select, {
-                    plugins: ['remove_button'],
+                const tom = new TomSelect(select, {
                     create: false,
                     onChange: function () {
                         if (updating) {
@@ -67,6 +66,15 @@
                         }
                         previous = next;
                     },
+                });
+
+                tom.control.addEventListener('click', function (e) {
+                    const item = e.target.closest('.item');
+                    if (!item || !tom.control.contains(item)) return;
+                    const value = item.dataset.value;
+                    if (value !== undefined) {
+                        tom.removeItem(value);
+                    }
                 });
             });
         });

@@ -1,10 +1,11 @@
 import random
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils import timezone
 from django_countries import countries
 from faker import Faker
 
@@ -30,9 +31,9 @@ from core.choices import (
     SmokingHabit,
     Weight,
 )
+from core.constants import CHILDREN_CHOICES
 from core.management.seed_data import (
     EDUCATIONAL_INSTITUTIONS,
-    ETHNICITIES,
     FIELDS_OF_STUDY,
     MOTHER_OCCUPATIONS,
 )
@@ -92,6 +93,9 @@ class Command(BaseCommand):
         User.objects.filter(is_superuser=False).delete()
         self.delete_super_user_data()
 
+        now = timezone.now()
+        three_months_ago = now - timedelta(days=90)
+
         users = []
         hashed_password = make_password(password)
         for index in range(number_of_users):
@@ -108,6 +112,11 @@ class Command(BaseCommand):
                 phone=self.faker.phone_number()[:15],
                 isVerified=self.faker.boolean(chance_of_getting_true=75),
                 password=hashed_password,
+                last_login=self.faker.date_time_between(
+                    start_date=three_months_ago,
+                    end_date=now,
+                    tzinfo=timezone.get_current_timezone(),
+                )
             )
             users.append(user)
 
@@ -158,7 +167,7 @@ class Command(BaseCommand):
                 ),
                 eatingHabit=random.choice(EatingHabit.values),
                 smokingHabit=random.choice(SmokingHabit.values),
-                numberOfChildren=random.choices([0, 1, 2, 3, 4], weights=[55, 25, 12, 6, 2])[0],
+                children=random.choices([0, 1, 2, 3, 4, 5], weights=[15, 20, 35, 20, 8, 2])[0],
                 nationality=country,
             ))
 
@@ -179,7 +188,7 @@ class Command(BaseCommand):
 
             education_profiles.append(EducationProfile(
                 user=user,
-                qualification=random.choice(EducationLevel.values),
+                educationLevel=random.choice(EducationLevel.values),
                 institution=random.choice(EDUCATIONAL_INSTITUTIONS),
                 fieldOfStudy=random.choice(FIELDS_OF_STUDY),
                 graduationYear=random.randint(2005, date.today().year),
@@ -241,7 +250,10 @@ class Command(BaseCommand):
                     MaritalStatus.values,
                     k=random.randint(0, min(2, len(MaritalStatus.values))),
                 ),
-                maxNumberOfChildren=random.choice([None, 0, 1, 2, 3, 4, 5]),
+                children=random.sample(
+                    [value for value, _ in CHILDREN_CHOICES],
+                    k=random.randint(0, len(CHILDREN_CHOICES)),
+                ),
                 nationality=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
                 physicalStatus=random.sample(
                     PhysicalStatus.values,
@@ -261,7 +273,7 @@ class Command(BaseCommand):
                 ),
                 residency=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
                 citizenship=random.sample(country_choices, k=random.randint(0, min(3, len(country_choices)))),
-                qualification=random.sample(
+                educationLevel=random.sample(
                     EducationLevel.values,
                     k=random.randint(0, len(EducationLevel.values)),
                 ),

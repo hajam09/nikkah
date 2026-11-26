@@ -23,7 +23,12 @@ from core.choices import (
     SmokingHabit,
     Weight,
 )
-from core.constants import COUNTRY_CHOICES, NIKKAH_AGE_CHOICES
+from core.constants import (
+    ANY_PREFERENCE,
+    CHILDREN_CHOICES,
+    COUNTRY_CHOICES,
+    NIKKAH_AGE_CHOICES,
+)
 from core.models import (
     User,
     MatrimonialProfile,
@@ -104,7 +109,7 @@ class MatrimonialProfileForm(NikkahForm):
         model = MatrimonialProfile
         exclude = ('user',)
         widgets = {
-            'numberOfChildren': forms.NumberInput(attrs={
+            'children': forms.NumberInput(attrs={
                 'min': 0,
                 'max': 10,
             }),
@@ -125,7 +130,7 @@ class MatrimonialProfileForm(NikkahForm):
             'languages': 'Languages spoken',
             'eatingHabit': 'Eating habit',
             'smokingHabit': 'Smoking habit',
-            'numberOfChildren': 'Number of children',
+            'children': 'Number of children',
             'nationality': 'Nationality',
             'aboutMe': 'About me',
         }
@@ -165,7 +170,7 @@ class EducationProfileForm(NikkahForm):
         model = EducationProfile
         exclude = ('user',)
         labels = {
-            'qualification': 'Qualification',
+            'educationLevel': 'Education Level',
             'institution': 'Institution',
             'fieldOfStudy': 'Field of Study',
             'graduationYear': 'Graduation year',
@@ -258,16 +263,14 @@ class WaliProfileForm(NikkahForm):
 
 
 class PartnerPreferenceForm(NikkahForm):
-    ANY_CHOICE = (('__ANY__', 'Any'),)
+    ANY_CHOICE = ((ANY_PREFERENCE, 'Any'),)
     AGE_CHOICES = (('', 'Any'),) + NIKKAH_AGE_CHOICES
     HEIGHT_CHOICES = (('', 'Any'),) + tuple(Height.choices)
-    MAX_CHILDREN_CHOICES = (('', 'Any'),) + tuple((str(count), str(count)) for count in range(6))
-
     minAge = forms.TypedChoiceField(choices=AGE_CHOICES, coerce=int, empty_value=None)
     maxAge = forms.TypedChoiceField(choices=AGE_CHOICES, coerce=int, empty_value=None)
     minHeight = forms.TypedChoiceField(choices=HEIGHT_CHOICES, coerce=int, empty_value=None)
     maxHeight = forms.TypedChoiceField(choices=HEIGHT_CHOICES, coerce=int, empty_value=None)
-    maxNumberOfChildren = forms.TypedChoiceField(choices=MAX_CHILDREN_CHOICES, coerce=int, empty_value=None)
+    children = forms.MultipleChoiceField(choices=ANY_CHOICE + CHILDREN_CHOICES)
     maritalStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(MaritalStatus.choices))
     nationality = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
     physicalStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(PhysicalStatus.choices))
@@ -276,7 +279,7 @@ class PartnerPreferenceForm(NikkahForm):
     languages = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Language.choices))
     residency = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
     citizenship = forms.MultipleChoiceField(choices=ANY_CHOICE + COUNTRY_CHOICES)
-    qualification = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EducationLevel.choices))
+    educationLevel = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EducationLevel.choices))
     employmentStatus = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(EmploymentStatus.choices))
     industry = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Industry.choices))
     madhab = forms.MultipleChoiceField(choices=ANY_CHOICE + tuple(Madhab.choices))
@@ -296,7 +299,7 @@ class PartnerPreferenceForm(NikkahForm):
             'minHeight': 'Minimum height',
             'maxHeight': 'Maximum height',
             'maritalStatus': 'Marital status',
-            'maxNumberOfChildren': 'Maximum number of children',
+            'children': 'Children',
             'nationality': 'Nationality',
             'physicalStatus': 'Physical status',
             'eatingHabit': 'Eating habit',
@@ -304,7 +307,7 @@ class PartnerPreferenceForm(NikkahForm):
             'languages': 'Languages',
             'residency': 'Preferred countries of residence',
             'citizenship': 'Citizenship',
-            'qualification': 'Education level',
+            'educationLevel': 'Education level',
             'employmentStatus': 'Employment status',
             'industry': 'Industry',
             'madhab': 'Madhab',
@@ -350,7 +353,7 @@ class PartnerPreferenceForm(NikkahForm):
 
 
 class ProfileSearchForm(forms.Form):
-    ANY_CHOICE = (('__ANY__', 'Any'),)
+    ANY_CHOICE = ((ANY_PREFERENCE, 'Any'),)
     AGE_CHOICES = (('', 'Any'),) + NIKKAH_AGE_CHOICES
     HEIGHT_CHOICES = (('', 'Any'),) + tuple(Height.choices)
     CREATED_CHOICES = (
@@ -360,16 +363,8 @@ class ProfileSearchForm(forms.Form):
         ('7', 'One week'),
         ('30', 'One month'),
     )
-    CHILDREN_CHOICES = (
-        ('0', 'No children'),
-        ('1', '1'),
-        ('2', '2'),
-        ('3', '3'),
-        ('4', '4'),
-        ('5PLUS', '5 or more'),
-    )
     YES_NO_CHOICES = (
-        ('__ANY__', 'Any'),
+        (ANY_PREFERENCE, 'Any'),
         ('YES', 'Yes'),
         ('NO', 'No'),
     )
@@ -478,7 +473,7 @@ class ProfileSearchForm(forms.Form):
                 })
 
                 if not self.is_bound:
-                    field.initial = ['__ANY__']
+                    field.initial = [ANY_PREFERENCE]
 
     def validate_range(self, cleaned_data, minimum, maximum, error, converter=int):
         min_value = cleaned_data.get(minimum)

@@ -48,7 +48,7 @@ class MatrimonialProfile(models.Model):
     languages = models.JSONField(default=list, blank=True)
     eatingHabit = models.CharField(max_length=20, blank=True, null=True, choices=EatingHabit.choices)
     smokingHabit = models.CharField(max_length=20, blank=True, null=True, choices=SmokingHabit.choices)
-    numberOfChildren = models.PositiveSmallIntegerField(default=0)
+    children = models.PositiveSmallIntegerField(default=0)
     nationality = models.CharField(max_length=100, blank=True, null=True)
     aboutMe = models.TextField(blank=True)
 
@@ -64,10 +64,7 @@ class MatrimonialProfile(models.Model):
     @property
     def age(self):
         today = timezone.localdate()
-        return today.year - self.dateOfBirth.year - (
-                (today.month, today.day) <
-                (self.dateOfBirth.month, self.dateOfBirth.day)
-        )
+        return today.year - self.dateOfBirth.year - (today.month < self.dateOfBirth.month)
 
 
 class ReligiousProfile(models.Model):
@@ -83,7 +80,7 @@ class ReligiousProfile(models.Model):
 
 class EducationProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='educationProfile')
-    qualification = models.CharField(max_length=30, choices=EducationLevel.choices)
+    educationLevel = models.CharField(max_length=30, choices=EducationLevel.choices)
     institution = models.CharField(max_length=255, blank=True)
     fieldOfStudy = models.CharField(max_length=150, blank=True)
     graduationYear = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -135,7 +132,7 @@ class PartnerPreference(models.Model):
     minHeight = models.PositiveSmallIntegerField(null=True, blank=True)
     maxHeight = models.PositiveSmallIntegerField(null=True, blank=True)
     maritalStatus = models.JSONField(default=list, blank=True)
-    maxNumberOfChildren = models.PositiveSmallIntegerField(null=True, blank=True)
+    children = models.JSONField(default=list, blank=True)
     nationality = models.JSONField(default=list, blank=True)
     physicalStatus = models.JSONField(default=list, blank=True)
     eatingHabit = models.JSONField(default=list, blank=True)
@@ -143,7 +140,7 @@ class PartnerPreference(models.Model):
     languages = models.JSONField(default=list, blank=True)
     residency = models.JSONField(default=list, blank=True)
     citizenship = models.JSONField(default=list, blank=True)
-    qualification = models.JSONField(default=list, blank=True)
+    educationLevel = models.JSONField(default=list, blank=True)
     employmentStatus = models.JSONField(default=list, blank=True)
     industry = models.JSONField(default=list, blank=True)
     madhab = models.JSONField(default=list, blank=True)
